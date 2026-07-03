@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#16a34a" />
+  <meta name="description" content="Học Toán lớp 9 theo phương pháp Feynman: hiểu bản chất, nhớ thật lâu. 30 phút mỗi ngày, không học vẹt." />
+  <title>Toán 9 · Học theo Feynman</title>
+
+  <!-- Google Fonts: Be Vietnam Pro (tiêu đề) + Inter (nội dung). Có fallback font hệ thống nếu offline. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <!-- Lưới an toàn: bắt lỗi nạp file (404) và lỗi chạy để không bao giờ trắng trang. -->
+  <script>
+    window.__BOOT_ERRORS__ = [];
+    window.addEventListener("error", function (e) {
+      // Lỗi nạp tài nguyên (script/css): e.target là thẻ bị lỗi, không có e.message
+      if (e && e.target && (e.target.tagName === "SCRIPT" || e.target.tagName === "LINK")) {
+        window.__BOOT_ERRORS__.push("Không nạp được: " + (e.target.src || e.target.href));
+      } else if (e && e.message) {
+        window.__BOOT_ERRORS__.push(e.message);
+      }
+    }, true);
+  </script>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#16a34a" />
+  <script>
+    if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js").catch(function () {});
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="app">
+
+    <!-- ===================== SIDEBAR (máy tính) ===================== -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">T9</div>
+        <div class="brand-name">Toán 9<small>Học theo Feynman</small></div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item" href="#/dashboard"   data-route="dashboard"><span class="ic">🏠</span> Trang chủ</a>
+        <a class="nav-item" href="#/lo-trinh"     data-route="lo-trinh"><span class="ic">🗺️</span> Lộ trình</a>
+        <a class="nav-item" href="#/luyen-tap"    data-route="luyen-tap"><span class="ic">📒</span> Luyện tập</a>
+        <a class="nav-item" href="#/tu-duy"        data-route="tu-duy"><span class="ic">🧠</span> Rèn tư duy</a>
+        <a class="nav-item" href="#/tien-bo"       data-route="tien-bo"><span class="ic">📈</span> Tiến bộ</a>
+        <a class="nav-item" href="#/flashcard"    data-route="flashcard"><span class="ic">🃏</span> Flashcard</a>
+        <a class="nav-item" href="#/on-tap"       data-route="on-tap"><span class="ic">🔁</span> Ôn tập <span class="nav-badge" data-badge="ontap">0</span></a>
+        <a class="nav-item" href="#/mentor"       data-route="mentor"><span class="ic">💬</span> AI Mentor</a>
+        <a class="nav-item" href="#/game"         data-route="game"><span class="ic">⚔️</span> Đấu trường</a>
+        <a class="nav-item" href="#/thanh-tich"   data-route="thanh-tich"><span class="ic">🏆</span> Thành tích</a>
+        <a class="nav-item" href="#/cai-dat"      data-route="cai-dat"><span class="ic">⚙️</span> Cài đặt</a>
+      </nav>
+
+      <div class="sidebar-foot">
+        <button class="profile-chip" id="profile-chip" title="Đổi thành viên">🦊 <span id="profile-chip-name">Học sinh</span> <small>đổi ▾</small></button>
+        <p class="soft" style="font-size:12.5px;line-height:1.5">
+          ⏱️ <b>30 phút/ngày</b> là đủ để tiến bộ.<br />
+          Hiểu bản chất — không học vẹt.
+        </p>
+      </div>
+    </aside>
+
+    <!-- ===================== KHU VỰC CHÍNH ===================== -->
+    <main class="main">
+
+      <!-- Thanh trên cùng cho điện thoại -->
+      <div class="mobile-top">
+        <div class="brand">
+          <div class="brand-mark">T9</div>
+          <div class="brand-name">Toán 9<small>Học theo Feynman</small></div>
+        </div>
+        <a class="icon-btn" href="#/luyen-tap" title="Luyện tập" aria-label="Luyện tập">📒</a>
+        <a class="icon-btn" href="#/game" title="Đấu trường" aria-label="Đấu trường">⚔️</a>
+        <a class="icon-btn" href="#/thanh-tich" title="Thành tích" aria-label="Thành tích">🏆</a>
+        <a class="icon-btn" href="#/cai-dat" title="Cài đặt" aria-label="Cài đặt">⚙️</a>
+      </div>
+
+      <!-- Thanh trên cùng cho máy tính -->
+      <header class="topbar">
+        <h1 id="view-title">Trang chủ</h1>
+        <div class="spacer"></div>
+        <span class="chip streak" id="chip-streak"><span class="ic flame">🔥</span> 0</span>
+        <span class="chip" id="chip-level">Lv 1</span>
+        <span class="chip exp" id="chip-exp"><span class="ic">⭐</span> 0 EXP</span>
+        <button class="icon-btn" id="toggle-theme" title="Đổi giao diện sáng / tối" aria-label="Đổi giao diện sáng tối">🌙</button>
+      </header>
+
+      <!-- Nội dung từng trang được app.js dựng vào đây -->
+      <div class="content">
+        <div id="app-view"></div>
+      </div>
+    </main>
+
+    <!-- Thanh điều hướng dưới cùng (điện thoại) -->
+    <nav class="tabbar">
+      <a href="#/dashboard"  data-route="dashboard"><span class="ic">🏠</span>Trang chủ</a>
+      <a href="#/lo-trinh"   data-route="lo-trinh"><span class="ic">🗺️</span>Lộ trình</a>
+      <a href="#/flashcard"  data-route="flashcard"><span class="ic">🃏</span>Thẻ</a>
+      <a href="#/on-tap"     data-route="on-tap"><span class="ic">🔁</span>Ôn tập</a>
+      <a href="#/mentor"     data-route="mentor"><span class="ic">💬</span>Mentor</a>
+    </nav>
+
+  </div>
+
+  <!-- Vùng thông báo nổi + lớp pháo giấy khi hoàn thành -->
+  <div class="toast-host"></div>
+  <canvas id="confetti"></canvas>
+
+  <!-- Nạp script THEO ĐÚNG THỨ TỰ phụ thuộc. Mỗi file gắn vào window.App. -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/engine.js"></script>
+  <script src="assets/js/app.js"></script>
+
+  <!-- Watchdog: nếu sau khi tải xong mà nội dung vẫn trống, hiện hướng dẫn thay vì trắng trang. -->
+  <script>
+    (function () {
+      function diagnose() {
+        var view = document.getElementById("app-view");
+        if (!view || view.innerHTML.trim().length > 0) return; // đã render OK → không làm gì
+
+        var missing = [];
+        if (!window.App || !window.App.DATA)    missing.push("data.js");
+        if (!window.App || !window.App.Storage) missing.push("storage.js");
+        if (!window.App || !window.App.Engine)  missing.push("engine.js");
+        if (!window.App || !window.App.UI)      missing.push("app.js");
+
+        var errs = window.__BOOT_ERRORS__ || [];
+        var rows = "";
+        if (missing.length) {
+          rows +=
+            '<p style="margin:0 0 10px"><b>Trình duyệt không nạp được các tệp:</b> ' +
+            missing.join(", ") + ".</p>" +
+            '<p style="margin:0 0 10px">Gần như chắc chắn do <b>máy chủ đang chạy sai thư mục gốc</b> ' +
+            "(cổng 3000 thường là server của một dự án khác). Hãy thử một trong hai cách dưới đây.</p>";
+        } else if (errs.length) {
+          rows +=
+            '<p style="margin:0 0 10px"><b>Có lỗi khi khởi động:</b></p><pre style="white-space:pre-wrap;' +
+            'background:rgba(0,0,0,.05);padding:10px 12px;border-radius:10px;font-size:13px;margin:0 0 10px">' +
+            errs.map(function (s) { return String(s); }).join("\n") + "</pre>";
+        } else {
+          rows += '<p style="margin:0 0 10px">Nội dung chưa hiện ra. Hãy thử tải lại trang (Ctrl/Cmd + Shift + R).</p>';
+        }
+
+        view.innerHTML =
+          '<div style="max-width:640px;margin:32px auto;padding:24px 26px;border:1px solid rgba(0,0,0,.12);' +
+          'border-radius:16px;font-family:system-ui,sans-serif;line-height:1.6;color:#1f2937;background:#fff">' +
+          '<h2 style="margin:0 0 12px;font-size:20px">⚠️ Chưa tải được nội dung</h2>' +
+          rows +
+          '<p style="margin:14px 0 6px"><b>Cách 1 — Đơn giản nhất:</b> đóng máy chủ, rồi <b>nhấp đúp trực tiếp vào tệp ' +
+          "<code>index.html</code></b> để mở bằng trình duyệt. Không cần server.</p>" +
+          '<p style="margin:0 0 6px"><b>Cách 2 — Chạy server đúng thư mục:</b> mở terminal <b>ngay trong thư mục ' +
+          "<code>toan9-feynman</code></b> (chứa <code>index.html</code>) rồi chạy <code>npx serve</code> " +
+          "hoặc <code>py -m http.server 8000</code>, sau đó mở đúng cổng được in ra.</p>" +
+          '<p style="margin:10px 0 0;color:#6b7280;font-size:13px">Mẹo: nhấn F12 → tab Console/Network để xem tệp nào bị lỗi 404.</p>' +
+          "</div>";
+      }
+      if (document.readyState === "complete") setTimeout(diagnose, 600);
+      else window.addEventListener("load", function () { setTimeout(diagnose, 600); });
+    })();
+  </script>
+</body>
+</html>
