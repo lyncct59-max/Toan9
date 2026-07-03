@@ -633,6 +633,7 @@
     const eyebrow = e => '<div class="step-eyebrow">' + e + "</div>";
 
     if (n === 1) {
+      if (L.hook && !HOOK_SEEN[L.id]) { renderHook(L, host); return; }
       host.innerHTML = `<div class="step-panel">
         ${eyebrow("① Giải thích như cho lớp 5")}
         <div class="prose">${f.s1.html}</div>
@@ -2810,6 +2811,43 @@
   }
   // hook cho kiểm thử
   if (window.App) window.App.TimeBank = { tick: timebankTick, _s: TIMEBANK };
+
+  /* =======================================================================
+     🎣 TẠO HỨNG THÚ — hook mở bài trước khi vào lý thuyết
+     ===================================================================== */
+  const HOOK_SEEN = {}; // mỗi bài chỉ hiện 1 lần trong phiên; mở app lần sau lại có
+  function renderHook(L, host) {
+    const h = L.hook;
+    host.innerHTML = `<div class="step-panel hook-panel">
+        <div class="hook-eyebrow">🎣 Tạo hứng thú · 3 phút <button class="hook-skip" id="hook-skip">Bỏ qua →</button></div>
+        <div class="hook-emoji">${h.emoji}</div>
+        <div class="hook-q">${h.q}</div>
+        <p class="hook-think">🤔 Khoan kéo xuống — em thử <b>tự đoán</b> trong 30 giây đã!</p>
+        <div id="hook-reveal-host"></div>
+        <div class="row mt" style="gap:8px;flex-wrap:wrap">
+          <button class="btn block" id="hook-reveal-btn" style="flex:1">🔍 Bật mí bí mật Toán học</button>
+        </div>
+      </div>`;
+    mountTts(host, h.q, ".hook-q");
+    const done = () => { HOOK_SEEN[L.id] = 1; showStep(1); };
+    $("#hook-skip").onclick = done;
+    $("#hook-reveal-btn").onclick = () => {
+      $("#hook-reveal-host").innerHTML = `<div class="hook-reveal">${h.reveal}</div>`;
+      const btn = $("#hook-reveal-btn");
+      btn.textContent = "🚀 Vào bài học ngay!";
+      btn.onclick = done;
+      const rv = $(".hook-reveal");
+      mountTtsInline(rv, h.reveal);
+    };
+  }
+  // nút nghe nhỏ gắn vào cuối một khối bất kỳ
+  function mountTtsInline(el, text) {
+    if (!el) return;
+    const btn = document.createElement("button");
+    btn.className = "tts-btn"; btn.textContent = "🔊 Nghe giảng";
+    btn.onclick = () => ttsToggle(text, btn);
+    el.appendChild(btn);
+  }
 
   /* =======================================================================
      ROUTER

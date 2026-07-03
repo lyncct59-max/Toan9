@@ -1030,3 +1030,29 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
 .mz-cell { aspect-ratio: 1; border-radius: 10px; background: color-mix(in srgb, var(--ink) 8%, var(--surface)); display: flex; align-items: center; justify-content: center; font-size: 22px; }
 .mz-cell.path { background: color-mix(in srgb, var(--brand) 14%, var(--surface)); outline: 1.5px dashed color-mix(in srgb, var(--brand) 40%, transparent); }
 .mz-cell.walked { background: var(--brand-soft); outline-color: var(--brand); }
+
+/* 🎣 Tạo hứng thú (hook mở bài) */
+.hook-panel {
+  border: 1.5px solid color-mix(in srgb, var(--brand) 35%, var(--border));
+  background: linear-gradient(150deg, color-mix(in srgb, var(--brand) 9%, var(--surface)), var(--surface) 65%);
+  border-radius: 16px; padding: 18px 20px;
+}
+.hook-eyebrow {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase;
+  color: var(--brand-strong, var(--brand-deep)); margin-bottom: 8px;
+}
+.hook-skip {
+  margin-left: auto; border: 0; background: transparent; cursor: pointer;
+  font-family: var(--font-body); font-size: 12px; font-weight: 700; color: var(--ink-faint);
+}
+.hook-skip:hover { color: var(--ink); }
+.hook-emoji { font-size: 46px; text-align: center; margin: 6px 0 10px; }
+.hook-q { font-size: 17px; font-weight: 700; line-height: 1.6; }
+.hook-think { color: var(--ink-soft); font-style: italic; font-size: 13.5px; margin: 10px 0 4px; }
+.hook-reveal {
+  border-left: 4px solid var(--brand); background: var(--brand-soft);
+  border-radius: 12px; padding: 12px 15px; margin-top: 12px; line-height: 1.65;
+  animation: hookin .35s ease;
+}
+@keyframes hookin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

@@ -1046,6 +1046,32 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
 .mz-cell.path { background: color-mix(in srgb, var(--brand) 14%, var(--surface)); outline: 1.5px dashed color-mix(in srgb, var(--brand) 40%, transparent); }
 .mz-cell.walked { background: var(--brand-soft); outline-color: var(--brand); }
 
+/* 🎣 Tạo hứng thú (hook mở bài) */
+.hook-panel {
+  border: 1.5px solid color-mix(in srgb, var(--brand) 35%, var(--border));
+  background: linear-gradient(150deg, color-mix(in srgb, var(--brand) 9%, var(--surface)), var(--surface) 65%);
+  border-radius: 16px; padding: 18px 20px;
+}
+.hook-eyebrow {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase;
+  color: var(--brand-strong, var(--brand-deep)); margin-bottom: 8px;
+}
+.hook-skip {
+  margin-left: auto; border: 0; background: transparent; cursor: pointer;
+  font-family: var(--font-body); font-size: 12px; font-weight: 700; color: var(--ink-faint);
+}
+.hook-skip:hover { color: var(--ink); }
+.hook-emoji { font-size: 46px; text-align: center; margin: 6px 0 10px; }
+.hook-q { font-size: 17px; font-weight: 700; line-height: 1.6; }
+.hook-think { color: var(--ink-soft); font-style: italic; font-size: 13.5px; margin: 10px 0 4px; }
+.hook-reveal {
+  border-left: 4px solid var(--brand); background: var(--brand-soft);
+  border-radius: 12px; padding: 12px 15px; margin-top: 12px; line-height: 1.65;
+  animation: hookin .35s ease;
+}
+@keyframes hookin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
 </style>
 
   <!-- Lưới an toàn: bắt lỗi nạp file (404) và lỗi chạy để không bao giờ trắng trang. -->
@@ -4003,6 +4029,144 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
     ]
   };
 
+
+  /* ===================== 🎣 TẠO HỨNG THÚ (hook mở bài, ~3 phút) ===================== */
+  const HOOKS = {
+    /* --- Chương I --- */
+    "pt-he-khai-niem": { emoji: "🧋",
+      q: "Đi quán trà sữa, hoá đơn ghi: <b>2 trà sữa + 1 bánh = 70 nghìn</b>. Bạn em mua <b>1 trà sữa + 1 bánh = 45 nghìn</b>. Không ai nhớ giá từng món… Chỉ với 2 hoá đơn, em tìm ra được không?",
+      reveal: "Mỗi hoá đơn chính là <b>một phương trình hai ẩn</b>: 2x + y = 70 và x + y = 45. Ghép hai cái lại là một <b>hệ phương trình</b> — và nghiệm của nó tiết lộ: trà sữa 25 nghìn, bánh 20 nghìn! Bài này cho em \"cặp kính\" nhìn xuyên mọi hoá đơn như thế. 🕵️" },
+    "he-phuong-trinh": { emoji: "🍊",
+      q: "Mẹ đi chợ: <b>3 kg cam + 2 kg táo hết 145 nghìn</b>. Cô hàng xóm mua <b>1 kg cam + 1 kg táo hết 60 nghìn</b>. Đố em tính được giá mỗi loại — mà không hỏi người bán?",
+      reveal: "Đặt cam là x, táo là y: 3x + 2y = 145 và x + y = 60. Dùng <b>phép thế</b> (rút y = 60 − x rồi thay vào) là ra ngay x = 25, y = 35. Bài học hôm nay dạy em hai \"tuyệt chiêu\" giải hệ: <b>thế</b> và <b>cộng đại số</b> — bấm máy cũng không nhanh hơn đâu! ⚡" },
+    "lap-he-pt": { emoji: "👨‍👦",
+      q: "Cha hơn con 30 tuổi. 5 năm nữa, tuổi cha <b>gấp 3 lần</b> tuổi con. Đố cả nhà: hiện giờ con mấy tuổi? (Thử đoán trước khi bật mí nhé!)",
+      reveal: "Gọi tuổi con là x, tuổi cha là y: y − x = 30 và y + 5 = 3(x + 5). Giải hệ → con <b>10 tuổi</b>, cha 40. Mọi câu đố tuổi tác, mua bán, vòi nước… đều \"dịch\" được thành hệ phương trình bằng đúng 4 bước em sắp học. 🧩" },
+
+    /* --- Chương II --- */
+    "pt-tich": { emoji: "🏀",
+      q: "Ném bóng lên cao, độ cao sau t giây là <b>h = t(6 − t)</b> mét. Hỏi lúc nào bóng <b>chạm đất</b> (h = 0)? Gợi ý: một tích bằng 0 thì sao nhỉ…",
+      reveal: "t(6 − t) = 0 ⟹ t = 0 (lúc ném) hoặc t = 6 (lúc rơi xuống). Bí mật: <b>tích bằng 0 khi một thừa số bằng 0</b> — quy tắc bé xíu này giải được cả phương trình bậc cao. Bài hôm nay còn dạy em né \"bẫy\" chia cho 0 trong phương trình chứa ẩn ở mẫu. ⚠️" },
+    "bat-dang-thuc": { emoji: "🛒",
+      q: "Shopee ghi: <b>\"Đơn từ 99k được freeship\"</b>. Game ghi: <b>\"12+\"</b>. Biển giao thông: <b>\"tối đa 60 km/h\"</b>. Em có nhận ra cả ba đều là… một thứ Toán không?",
+      reveal: "Tất cả là <b>bất đẳng thức</b>: đơn ≥ 99k, tuổi ≥ 12, tốc độ ≤ 60. Em dùng chúng mỗi ngày mà không biết tên! Hôm nay học luật chơi của dấu &gt;, &lt;: khi nào giữ chiều, khi nào <b>lật ngược</b> (cẩn thận với số âm đấy). ⚖️" },
+    "bat-phuong-trinh": { emoji: "🎯",
+      q: "Hai bài kiểm tra đầu em được <b>7 và 8 điểm</b>. Muốn trung bình cả ba bài <b>từ 8 trở lên</b>, bài cuối phải ít nhất mấy điểm? Đoán nhanh xem!",
+      reveal: "Gọi điểm bài cuối là x: (7 + 8 + x)/3 ≥ 8 ⟹ x ≥ <b>9</b>. Đó là một <b>bất phương trình</b> — công cụ trả lời mọi câu \"ít nhất bao nhiêu?\", \"nhiều nhất bao nhiêu?\" trong đời: tiền tiêu, điểm số, thời gian chơi game… 😉" },
+
+    /* --- Chương III --- */
+    "can-bac-hai": { emoji: "🏟️",
+      q: "Sân hình vuông rộng đúng <b>64 m²</b>. Muốn rào quanh sân, phải biết mỗi cạnh dài bao nhiêu. Từ <b>diện tích</b> lần ngược ra <b>cạnh</b> — phép tính đó tên là gì?",
+      reveal: "Là <b>căn bậc hai</b>: cạnh = √64 = 8 m — phép \"đi lùi\" của bình phương. Màn hình 55 inch, cường độ động đất, tốc độ rơi… đều giấu một dấu √ bên trong. Hôm nay em sẽ thuần phục ký hiệu \"đáng sợ\" này trong 30 phút. 💪" },
+    "khai-can": { emoji: "🤯",
+      q: "Không máy tính, đố em tính <b>√50</b> trong 5 giây! Nghe vô lý? Dân chuyên Toán làm được — nhờ một mẹo tách số cực gọn.",
+      reveal: "Tách 50 = 25 · 2 ⟹ √50 = √25 · √2 = <b>5√2</b>. Bí kíp: <b>√(a·b) = √a · √b</b> — dấu căn \"đi xuyên\" phép nhân và phép chia. Học xong bài này, √72, √200… đều thành chuyện nhỏ. ✨" },
+    "rut-gon-can": { emoji: "🧐",
+      q: "Vì sao thầy cô luôn bắt viết <b>5√2</b> mà không cho ghi <b>7,071</b>? Chẳng phải 7,071 dễ hiểu hơn sao?",
+      reveal: "Vì 7,071 chỉ là <b>xấp xỉ</b> (số thật là 7,0710678…), còn 5√2 <b>chính xác tuyệt đối</b>. Toán học quý sự chính xác! Hôm nay em học nghệ thuật \"dọn dẹp\" biểu thức chứa căn: đưa ra ngoài, cộng căn đồng dạng, trục căn ở mẫu — để đáp án vừa đúng vừa đẹp. 🧹" },
+    "can-bac-ba": { emoji: "🐠",
+      q: "Bể cá hình lập phương chứa đúng <b>27 lít</b> (= 27 dm³). Đố em: mỗi cạnh bể dài bao nhiêu? Gợi ý: số nào nhân với chính nó <b>ba lần</b> ra 27?",
+      reveal: "3 × 3 × 3 = 27 ⟹ cạnh = <b>∛27 = 3 dm</b>. Đó là <b>căn bậc ba</b> — phép ngược của mũ ba. Điều thú vị: khác căn bậc hai, số ÂM cũng có căn bậc ba (∛(−8) = −2). Vào bài để biết vì sao! 🧊" },
+
+    /* --- Chương IV --- */
+    "ti-so-luong-giac": { emoji: "🗼",
+      q: "Làm sao đo chiều cao cột cờ <b>mà không trèo lên</b>? Chỉ với một thước dây dưới đất và một chiếc thước đo góc — người xưa đo được cả kim tự tháp!",
+      reveal: "Bí mật là <b>tỉ số lượng giác</b>: đứng cách chân cột 10 m, ngẩng góc 60° → chiều cao = 10 · tan 60° ≈ 17,3 m. Chỉ cần nhớ thần chú <b>SOH–CAH–TOA</b> là cả thế giới đo đạc mở ra trước mắt em. 📐" },
+    "he-thuc-luong": { emoji: "🚒",
+      q: "Lính cứu hoả có thang dài <b>5 m</b>, dựa vào tường nghiêng <b>60°</b>. Trong 3 giây, họ phải biết: thang chạm tường ở độ cao bao nhiêu — đủ tới cửa sổ tầng 2 không?",
+      reveal: "Cao = 5 · sin 60° ≈ <b>4,33 m</b> — vừa đủ! Đó là <b>hệ thức cạnh–góc</b>: biết 1 cạnh + 1 góc là \"giải\" được cả tam giác vuông. Kỹ năng của lính cứu hoả, kiến trúc sư, phi công… và của em sau bài này. 🧯" },
+
+    /* --- Chương V --- */
+    "duong-tron": { emoji: "🛞",
+      q: "Vì sao bánh xe hình <b>tròn</b> mà không vuông, không tam giác? (Đừng cười — trả lời chuẩn bằng Toán khó hơn em nghĩ đấy!)",
+      reveal: "Vì đường tròn là tập hợp mọi điểm <b>cách đều tâm đúng R</b> — nên trục xe luôn giữ một độ cao, xe chạy êm ru. Bánh vuông sẽ khiến xe \"nhảy\" theo từng góc! Bài mở đầu chương Đường tròn cho em ngôn ngữ để nói về hình tròn như dân chuyên. ⭕" },
+    "cung-day": { emoji: "🍕",
+      q: "Cắt pizza thành <b>8 miếng đều nhau</b> — mỗi miếng \"mở\" một góc bao nhiêu độ ở tâm bánh? Còn mặt đồng hồ: từ số 12 đến số 3 là góc bao nhiêu?",
+      reveal: "Pizza: 360° ÷ 8 = <b>45°</b> mỗi miếng. Đồng hồ: 3 khoảng × 30° = <b>90°</b>. Em vừa dùng <b>góc ở tâm</b> và <b>số đo cung</b> — hai nhân vật chính của bài học hôm nay, kèm \"người anh em\" dây cung. 🕒" },
+    "do-dai-cung": { emoji: "🕰️",
+      q: "Kim phút dài <b>10 cm</b>. Sau 15 phút, <b>đầu kim</b> đã \"bơi\" được quãng đường bao nhiêu cm? (Không phải 10 cm đâu nhé!)",
+      reveal: "15 phút = ¼ vòng ⟹ quãng đường = ¼ · 2π·10 ≈ <b>15,7 cm</b> — đó là <b>độ dài cung</b>. Còn miếng pizza em ăn là <b>hình quạt</b>, có công thức diện tích riêng. Học xong bài này, em tính được cả phần giấy của chiếc quạt xếp! 🪭" },
+    "vi-tri-duong-thang-tron": { emoji: "🛣️",
+      q: "Bánh xe lăn trên đường: mặt đường và bánh xe chạm nhau ở <b>mấy điểm</b>? Vệ tinh bay ngang qua vùng phủ sóng tròn: đường bay có thể cắt vùng đó kiểu gì?",
+      reveal: "Chỉ có 3 kịch bản cho một đường thẳng và một đường tròn: <b>cắt (2 điểm) — tiếp xúc (1 điểm) — không chạm (0 điểm)</b>, và phân biệt chúng chỉ bằng phép so d với R. Mặt đường chính là <b>tiếp tuyến</b> của bánh xe (d = R)! 🛞" },
+    "vi-tri-hai-duong-tron": { emoji: "🏅",
+      q: "Nhìn logo <b>Olympic 5 vòng tròn</b>: có cặp vòng cắt nhau, có cặp chẳng chạm nhau. Làm sao biết chắc hai vòng tròn cắt / chạm / rời nhau <b>mà không cần vẽ</b>?",
+      reveal: "Chỉ cần so <b>khoảng cách hai tâm d</b> với <b>R + r</b> và <b>|R − r|</b>: nằm giữa → cắt nhau; bằng → tiếp xúc; ngoài → rời nhau. Một phép trừ, một phép cộng — biết ngay số phận của hai vòng tròn. Đơn giản đến bất ngờ! 🎯" },
+
+    /* --- Chương VI --- */
+    "ham-so-y-ax2": { emoji: "🏀",
+      q: "Ném bóng rổ, phun đài nước, pháo hoa rơi… vì sao đường bay <b>luôn cong cùng một kiểu</b>? Cả ăng-ten chảo, đèn pha ô tô cũng cố tình làm theo đường cong đó!",
+      reveal: "Đó là <b>parabol</b> — đồ thị của <b>y = ax²</b>. Trọng lực khiến mọi vật ném đi đều vẽ parabol trên trời; còn kỹ sư lợi dụng tính chất \"hội tụ về một điểm\" của nó để bắt sóng, chiếu xa. Hôm nay em làm chủ đường cong nổi tiếng nhất vật lý. 📡" },
+    "phuong-trinh-bac-hai": { emoji: "🌾",
+      q: "Nhà em có mảnh vườn chữ nhật <b>dài hơn rộng 5 m</b>, diện tích <b>84 m²</b>. Bố hỏi: \"Con tính giúp bố kích thước vườn?\" — em xử lý thế nào?",
+      reveal: "Gọi rộng là x: x(x + 5) = 84 ⟹ <b>x² + 5x − 84 = 0</b> — một <b>phương trình bậc hai</b>! Giải ra x = 7 (rộng 7 m, dài 12 m). Bài hôm nay trao em \"chìa khoá vạn năng\" Δ = b² − 4ac mở được mọi phương trình bậc hai trên đời. 🗝️" },
+    "he-thuc-vi-et": { emoji: "⚡",
+      q: "Thách em: đọc nghiệm của <b>x² − 5x + 6 = 0</b> trong <b>2 giây</b>, không nháp, không máy tính, không cả Δ. Tin không?",
+      reveal: "Nghiệm là <b>2 và 3</b> — vì tổng của chúng = 5, tích = 6! Đó là <b>định lí Viète</b>: nhìn tổng và tích là \"đọc vị\" nghiệm. Tuyệt chiêu nhẩm nghiệm nhanh nhất chương trình lớp 9, dân thi vào 10 ai cũng phải thủ sẵn. 🥷" },
+    "lap-pt": { emoji: "📱",
+      q: "Tăng mỗi cạnh của tấm ảnh vuông thêm <b>3 cm</b> thì diện tích thành <b>64 cm²</b>. Đố em tìm được cạnh ban đầu — chỉ bằng một phương trình?",
+      reveal: "(x + 3)² = 64 ⟹ x + 3 = 8 ⟹ x = <b>5 cm</b>. \"Dịch\" đề văn thành phương trình rồi giải — đó là kỹ năng ăn điểm to nhất trong đề thi vào 10, và là thứ em luyện suốt bài hôm nay với đủ kiểu: diện tích, chuyển động, tìm số. ✍️" },
+
+    /* --- Chương VII --- */
+    "thong-ke": { emoji: "🗳️",
+      q: "Lớp bình chọn nơi dã ngoại: tờ giấy ghi <b>Đà Lạt, Vũng Tàu, Đà Lạt, Đà Lạt, Vũng Tàu…</b> 40 phiếu lộn xộn. Làm sao biết ngay bên nào thắng mà không đếm đi đếm lại?",
+      reveal: "Kẻ <b>bảng tần số</b>: mỗi lựa chọn một dòng, đếm một lượt là xong — rồi vẽ <b>biểu đồ cột</b> là ai nhìn cũng hiểu trong 3 giây. Thống kê chính là nghệ thuật biến đống số lộn xộn thành một bức tranh biết nói. 📊" },
+    "tan-so-tuong-doi": { emoji: "⚖️",
+      q: "Lớp A có <b>9/30</b> bạn mê bóng đá, lớp B có <b>10/40</b>. Lớp B nhiều fan hơn (10 &gt; 9) — vậy lớp B \"máu\" bóng đá hơn? Khoan, có gì đó sai sai…",
+      reveal: "So số đếm là <b>bẫy</b>! Phải so phần trăm: lớp A = 9/30 = <b>30%</b>, lớp B = 10/40 = 25% → lớp A mới cuồng hơn. Đó là <b>tần số tương đối</b> — vũ khí chống bị số liệu \"lừa\", thứ em sẽ gặp cả đời khi đọc báo, xem quảng cáo. 🧠" },
+    "tan-so-ghep-nhom": { emoji: "🌊",
+      q: "Cả khối thi xong, cô nhận về <b>500 con điểm</b> lẻ tẻ từ 0,25 đến 10. Nhìn danh sách dài dằng dặc, làm sao thấy được \"bức tranh chung\" của khối?",
+      reveal: "Gom điểm thành <b>nhóm</b>: [0;2), [2;4), [4;6)… rồi đếm mỗi nhóm — 500 con số co lại thành 5 cột biểu đồ, nhìn phát biết ngay khối học ổn hay không. <b>Ghép nhóm</b> là cách người lớn xử lý dữ liệu khổng lồ: điểm thi, lương, chiều cao… 🗂️" },
+
+    /* --- Chương VIII --- */
+    "phep-thu": { emoji: "🎲",
+      q: "Chơi Cờ Cá Ngựa, em tung <b>2 con xúc xắc</b> cùng lúc. Đố em: có tất cả <b>bao nhiêu kết quả</b> có thể xảy ra? (Nhiều hơn 12 đấy!)",
+      reveal: "Mỗi con có 6 mặt, độc lập nhau ⟹ 6 × 6 = <b>36 kết quả</b>. Tập hợp cả 36 khả năng đó gọi là <b>không gian mẫu</b> — nền móng để tính mọi xác suất. Chưa liệt kê được không gian mẫu thì đừng nói chuyện may rủi! 🎰" },
+    "xac-suat": { emoji: "🎡",
+      q: "Vòng quay trúng thưởng có <b>10 ô</b>, chỉ <b>1 ô</b> \"Trúng lớn\". Quảng cáo hét: \"Cơ hội trúng CỰC CAO!\". Em tính xem cơ hội thật là bao nhiêu — trước khi mất tiền?",
+      reveal: "P(trúng) = 1/10 = <b>10%</b> — nghĩa là trung bình quay 10 lần mới trúng 1! <b>Xác suất</b> là môn \"vạch trần\" quảng cáo, game gacha, vé số… Ai hiểu xác suất, người đó khó bị dụ. Học để tỉnh táo! 🛡️" },
+
+    /* --- Chương IX --- */
+    "goc-noi-tiep": { emoji: "🎬",
+      q: "Trong rạp phim vòng cung, có nhiều ghế ở <b>vị trí khác nhau</b> nhưng nhìn màn hình với <b>góc rộng y hệt nhau</b>. Ma thuật gì vậy?",
+      reveal: "Các ghế đó nằm trên <b>cùng một cung tròn</b>, và <b>các góc nội tiếp cùng chắn một cung thì bằng nhau</b>! Thêm bí mật nữa: góc nội tiếp chắn nửa đường tròn luôn <b>vuông 90°</b> — định lý đẹp nhất nhì hình học lớp 9 đang chờ em. 🎥" },
+    "duong-tron-ngoai-noi-tiep": { emoji: "🪵",
+      q: "Có tấm gỗ hình tam giác, em muốn cưa ra <b>chiếc đĩa tròn TO NHẤT</b> có thể. Đặt compa vào đâu? Còn muốn vẽ vòng tròn đi qua đúng <b>3 cây cột</b> ngoài sân thì sao?",
+      reveal: "Đĩa to nhất = <b>đường tròn nội tiếp</b> (tâm là giao 3 đường phân giác). Vòng qua 3 cột = <b>đường tròn ngoại tiếp</b> (tâm là giao 3 trung trực). Mỗi tam giác đều \"nuôi\" đúng hai vòng tròn này — bài hôm nay dạy em tìm tâm của chúng chuẩn từng milimét. 🧭" },
+    "tu-giac-noi-tiep": { emoji: "🔮",
+      q: "Vẽ tứ giác có <b>4 đỉnh cùng nằm trên một đường tròn</b>, rồi đo 2 góc đối diện và cộng lại. Làm với tứ giác khác… kết quả <b>luôn ra đúng một con số</b>. Số nào?",
+      reveal: "Luôn là <b>180°</b>! Tứ giác nội tiếp giấu \"mật mã\" đó — và điều ngược lại cũng đúng: cứ tổng hai góc đối bằng 180° là 4 đỉnh nằm gọn trên một đường tròn. Đây là chìa khoá của hàng loạt bài chứng minh trong đề thi vào 10. 🔑" },
+    "da-giac-deu": { emoji: "🐝",
+      q: "Vì sao ong xây tổ hình <b>lục giác đều</b> — không tròn, không vuông, không tam giác? Loài ong có biết Toán không?",
+      reveal: "Toán chứng minh: lục giác đều <b>lát kín</b> mặt phẳng mà tốn <b>ít sáp nhất</b> cho cùng diện tích chứa mật — ong là \"kỹ sư tối ưu\" bẩm sinh! Hôm nay em học ngôn ngữ của các hình hoàn hảo: mỗi góc lục giác đều bao nhiêu độ? Vì sao biển STOP có 8 cạnh? 🛑" },
+
+    /* --- Chương X --- */
+    "hinh-tru-non": { emoji: "🥤",
+      q: "Đặt chiếc <b>phễu</b> úp vừa khít vào <b>lon nước</b> cùng đáy, cùng chiều cao. Đố em: phải rót <b>mấy phễu nước</b> mới đầy lon? (Cược là em đoán sai!)",
+      reveal: "Đúng <b>3 phễu</b>! Thể tích hình nón = <b>⅓</b> thể tích hình trụ cùng đáy cùng cao — người Hy Lạp cổ đã kinh ngạc vì điều này. Học công thức V = πr²h và V = ⅓πr²h hôm nay, em tính được lon nước, ốc quế, bồn chứa, nón lá… 🍦" },
+    "hinh-cau": { emoji: "🫧",
+      q: "Vì sao bong bóng xà phòng <b>luôn tròn xoe</b> — dù em thổi qua vòng vuông hay hình sao? Thiên nhiên đang \"khoe\" một định lý đấy!",
+      reveal: "Vì hình cầu chứa được <b>nhiều không khí nhất với ít \"vỏ\" nhất</b> — màng xà phòng lười nên tự co về dạng tối ưu! Hôm nay em nắm hai công thức quyền lực: <b>S = 4πR²</b> và <b>V = 4⁄3·πR³</b> — đủ để tính từ quả bóng đến… Trái Đất. 🌍" },
+
+    /* --- Mở rộng --- */
+    "ham-so-bac-nhat": { emoji: "🚕",
+      q: "Đặt Grab, em có để ý giá luôn tính kiểu: <b>Tiền = phí mở cửa + số km × đơn giá</b>? Tiền điện, tiền gửi xe tháng, gói cước điện thoại… cũng chung một \"khuôn\". Khuôn đó là gì?",
+      reveal: "Chính là <b>y = ax + b</b> — hàm số bậc nhất! (a = đơn giá mỗi km, b = phí mở cửa.) Và câu hỏi \"mỗi tháng để dành 500 nghìn thì bao lâu mua được điện thoại 6 triệu?\" cũng là nó: y = 500x → x = 12 tháng. Hiểu một công thức, đọc vị cả trăm hoá đơn. 💸" },
+    "tam-giac-dong-dang": { emoji: "🏜️",
+      q: "2600 năm trước, nhà thông thái <b>Thales</b> đo được chiều cao kim tự tháp Ai Cập mà <b>không trèo lên</b> — chỉ dùng một cây gậy và… bóng nắng. Ông làm thế nào?",
+      reveal: "Bóng gậy và bóng kim tự tháp tạo hai <b>tam giác đồng dạng</b> — các cạnh tỉ lệ với nhau: chiều cao tháp / bóng tháp = chiều cao gậy / bóng gậy. Một phép chia là xong! Đồng dạng là \"máy phóng to – thu nhỏ\" của hình học, dùng trong bản đồ, phim ảnh, thiết kế. 📏" },
+    "ti-le-vang": { emoji: "🌻",
+      q: "Vì sao logo Apple, thẻ ATM, mặt nàng Mona Lisa… nhìn đều \"sướng mắt\" một cách khó tả? Hoa hướng dương và vỏ ốc cũng giấu chung một con số!",
+      reveal: "Con số đó là <b>tỉ lệ vàng φ ≈ 1,618</b> — khi phần lớn / phần nhỏ = cả tổng / phần lớn. Nghệ sĩ, kiến trúc sư dùng nó hàng nghìn năm để tạo cảm giác cân đối hoàn hảo. Hôm nay em học cách \"nhìn\" ra φ ở khắp nơi. 🎨" },
+    "phoi-canh": { emoji: "🛤️",
+      q: "Đứng giữa đường ray nhìn về xa: hai thanh ray <b>song song</b> mà cứ như <b>chụm lại một điểm</b> ở chân trời. Mắt em bị lừa — hay Toán học đang vẽ?",
+      reveal: "Đó là <b>phối cảnh</b>: mọi đường song song \"gặp nhau\" tại <b>điểm tụ</b> trên đường chân trời. Hoạ sĩ Phục Hưng khám phá ra luật này và làm tranh 3D trên giấy 2D. Học xong, em vẽ được con đường, căn phòng sâu hun hút chỉ với thước kẻ. 🖼️" },
+    "on-thi-tong-hop": { emoji: "🏆",
+      q: "Trận chung kết mà biết trước <b>sơ đồ chiến thuật</b> của đối thủ thì đá dễ hơn bao nhiêu? Đề thi vào 10 môn Toán cũng có \"sơ đồ\" cố định — em đã nhìn ra chưa?",
+      reveal: "Đề vào 10 hầu như luôn gồm: <b>rút gọn căn thức → hệ/phương trình & bài toán thực tế → hàm số & Viète → hình đường tròn → câu khó lấy điểm 10</b>. Buổi ôn tổng hợp này chính là \"bản đồ chiến thuật\" giúp em phân bổ thời gian và gom điểm chắc từng câu. 🗺️" }
+  };
+  Object.keys(HOOKS).forEach(id => { if (lessons[id]) lessons[id].hook = HOOKS[id]; });
+
   /* Xuất dữ liệu ra App.DATA */
   App.DATA = { chapters, lessons, mentor, mentorFallback, games, practice, thinking };
 })(window.App = window.App || {});
@@ -5829,6 +5993,7 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
     const eyebrow = e => '<div class="step-eyebrow">' + e + "</div>";
 
     if (n === 1) {
+      if (L.hook && !HOOK_SEEN[L.id]) { renderHook(L, host); return; }
       host.innerHTML = `<div class="step-panel">
         ${eyebrow("① Giải thích như cho lớp 5")}
         <div class="prose">${f.s1.html}</div>
@@ -8006,6 +8171,43 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
   }
   // hook cho kiểm thử
   if (window.App) window.App.TimeBank = { tick: timebankTick, _s: TIMEBANK };
+
+  /* =======================================================================
+     🎣 TẠO HỨNG THÚ — hook mở bài trước khi vào lý thuyết
+     ===================================================================== */
+  const HOOK_SEEN = {}; // mỗi bài chỉ hiện 1 lần trong phiên; mở app lần sau lại có
+  function renderHook(L, host) {
+    const h = L.hook;
+    host.innerHTML = `<div class="step-panel hook-panel">
+        <div class="hook-eyebrow">🎣 Tạo hứng thú · 3 phút <button class="hook-skip" id="hook-skip">Bỏ qua →</button></div>
+        <div class="hook-emoji">${h.emoji}</div>
+        <div class="hook-q">${h.q}</div>
+        <p class="hook-think">🤔 Khoan kéo xuống — em thử <b>tự đoán</b> trong 30 giây đã!</p>
+        <div id="hook-reveal-host"></div>
+        <div class="row mt" style="gap:8px;flex-wrap:wrap">
+          <button class="btn block" id="hook-reveal-btn" style="flex:1">🔍 Bật mí bí mật Toán học</button>
+        </div>
+      </div>`;
+    mountTts(host, h.q, ".hook-q");
+    const done = () => { HOOK_SEEN[L.id] = 1; showStep(1); };
+    $("#hook-skip").onclick = done;
+    $("#hook-reveal-btn").onclick = () => {
+      $("#hook-reveal-host").innerHTML = `<div class="hook-reveal">${h.reveal}</div>`;
+      const btn = $("#hook-reveal-btn");
+      btn.textContent = "🚀 Vào bài học ngay!";
+      btn.onclick = done;
+      const rv = $(".hook-reveal");
+      mountTtsInline(rv, h.reveal);
+    };
+  }
+  // nút nghe nhỏ gắn vào cuối một khối bất kỳ
+  function mountTtsInline(el, text) {
+    if (!el) return;
+    const btn = document.createElement("button");
+    btn.className = "tts-btn"; btn.textContent = "🔊 Nghe giảng";
+    btn.onclick = () => ttsToggle(text, btn);
+    el.appendChild(btn);
+  }
 
   /* =======================================================================
      ROUTER
