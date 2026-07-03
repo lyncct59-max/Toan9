@@ -1,5 +1,5 @@
-/* Service worker: chạy offline sau lần mở đầu */
-const CACHE = "toan9-feynman-v1";
+/* Service worker v3 — NETWORK-FIRST: có mạng luôn lấy bản mới nhất, mất mạng dùng bản đã lưu */
+const CACHE = "toan9-feynman-v3";
 const SHELL = [
   "./", "./index.html", "./manifest.webmanifest",
   "./assets/css/styles.css",
@@ -18,13 +18,16 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   e.respondWith(
-    caches.match(e.request, { ignoreSearch: true }).then((hit) =>
-      hit ||
-      fetch(e.request).then((res) => {
+    fetch(e.request)
+      .then((res) => {
         const copy = res.clone();
         caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {});
         return res;
-      }).catch(() => (e.request.mode === "navigate" ? caches.match("./index.html") : undefined))
-    )
+      })
+      .catch(() =>
+        caches.match(e.request, { ignoreSearch: true }).then((hit) =>
+          hit || (e.request.mode === "navigate" ? caches.match("./index.html") : undefined)
+        )
+      )
   );
 });

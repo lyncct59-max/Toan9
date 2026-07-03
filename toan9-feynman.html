@@ -1072,6 +1072,8 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
 }
 @keyframes hookin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
+.app-ver { color: var(--ink-faint); font-size: 11.5px; }
+
 </style>
 
   <!-- Lưới an toàn: bắt lỗi nạp file (404) và lỗi chạy để không bao giờ trắng trang. -->
@@ -1089,9 +1091,18 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="theme-color" content="#16a34a" />
   <script>
+    // Đăng ký SW + TỰ CẬP NHẬT: khi có bản mới trên máy chủ, tải lại trang đúng 1 lần
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
       window.addEventListener("load", function () {
-        navigator.serviceWorker.register("sw.js").catch(function () {});
+        navigator.serviceWorker.register("sw.js").then(function (reg) {
+          try { reg.update(); } catch (e) {}
+          setInterval(function () { try { reg.update(); } catch (e) {} }, 60 * 60 * 1000);
+        }).catch(function () {});
+        var refreshed = false;
+        navigator.serviceWorker.addEventListener("controllerchange", function () {
+          if (refreshed) return; refreshed = true;
+          location.reload();
+        });
       });
     }
   </script>
@@ -5367,6 +5378,8 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
 (function (App) {
   "use strict";
 
+  const APP_VERSION = "v3.0 · 03/07/2026";
+
   const S = App.Storage;
   const E = App.Engine;
   const D = App.DATA;
@@ -6606,7 +6619,7 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
           <button class="btn ghost" id="reset">Đặt lại</button>
         </div>
       </div>
-      <p class="soft mt" style="font-size:13px">Mọi dữ liệu chỉ lưu trên trình duyệt của em (LocalStorage) — không gửi đi đâu cả.</p>`);
+      <p class="soft mt" style="font-size:13px">Mọi dữ liệu chỉ lưu trên trình duyệt của em (LocalStorage) — không gửi đi đâu cả.<br />Phiên bản: <b>${APP_VERSION}</b></p>`);
 
     $("#sw-dark").onclick = () => {
       const nowDark = document.documentElement.getAttribute("data-theme") !== "dark";
@@ -8273,6 +8286,11 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
     S.load();
     initProfileChip();
     startTimebank();
+    try {
+      console.log("Toán 9 Feynman", APP_VERSION);
+      const foot = document.querySelector(".sidebar-foot p");
+      if (foot) foot.insertAdjacentHTML("beforeend", '<br /><span class="app-ver">Phiên bản ' + APP_VERSION + "</span>");
+    } catch (e) {}
 
     // theme: ưu tiên lựa chọn đã lưu, nếu chưa thì theo hệ thống
     const saved = S.getTheme();

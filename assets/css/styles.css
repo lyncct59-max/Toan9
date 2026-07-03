@@ -1056,3 +1056,5 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
   animation: hookin .35s ease;
 }
 @keyframes hookin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.app-ver { color: var(--ink-faint); font-size: 11.5px; }

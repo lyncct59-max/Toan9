@@ -7,6 +7,8 @@
 (function (App) {
   "use strict";
 
+  const APP_VERSION = "v3.0 · 03/07/2026";
+
   const S = App.Storage;
   const E = App.Engine;
   const D = App.DATA;
@@ -1246,7 +1248,7 @@
           <button class="btn ghost" id="reset">Đặt lại</button>
         </div>
       </div>
-      <p class="soft mt" style="font-size:13px">Mọi dữ liệu chỉ lưu trên trình duyệt của em (LocalStorage) — không gửi đi đâu cả.</p>`);
+      <p class="soft mt" style="font-size:13px">Mọi dữ liệu chỉ lưu trên trình duyệt của em (LocalStorage) — không gửi đi đâu cả.<br />Phiên bản: <b>${APP_VERSION}</b></p>`);
 
     $("#sw-dark").onclick = () => {
       const nowDark = document.documentElement.getAttribute("data-theme") !== "dark";
@@ -2913,6 +2915,11 @@
     S.load();
     initProfileChip();
     startTimebank();
+    try {
+      console.log("Toán 9 Feynman", APP_VERSION);
+      const foot = document.querySelector(".sidebar-foot p");
+      if (foot) foot.insertAdjacentHTML("beforeend", '<br /><span class="app-ver">Phiên bản ' + APP_VERSION + "</span>");
+    } catch (e) {}
 
     // theme: ưu tiên lựa chọn đã lưu, nếu chưa thì theo hệ thống
     const saved = S.getTheme();
