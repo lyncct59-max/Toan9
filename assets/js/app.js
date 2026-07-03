@@ -1223,12 +1223,15 @@
       <div class="section-title mt"><span class="ic">🔁</span><h2>Duy trì thói quen</h2></div>
       <div class="card">
         <div class="setting-row">
-          <div class="s-text"><b>Nhắc học mỗi ngày ⏰</b><span>Khi em mở web sau giờ đã chọn mà hôm đó chưa học, sẽ hiện lời nhắc.</span></div>
+          <div class="s-text"><b>Nhắc học theo lịch tuần ⏰</b><span>Chọn giờ cho từng ngày để né lịch học các môn khác. Đến giờ (khi app đang mở) sẽ hiện lời nhắc; đã học đủ mục tiêu thì không nhắc nữa.</span></div>
           <div class="switch ${rem.enabled ? "on" : ""}" id="sw-remind"></div>
         </div>
-        <div class="setting-row">
-          <div class="s-text"><b>Giờ nhắc</b><span>Thời điểm muốn được nhắc học.</span></div>
-          <input type="time" class="time-input" id="remind-time" value="${rem.time || "19:00"}">
+        <div class="remind-week" id="remind-week">
+          ${["CN","T2","T3","T4","T5","T6","T7"].map((lb, d) => `
+            <div class="rw-day ${rem.times[d] ? "on" : ""}" data-d="${d}">
+              <button class="rw-toggle" data-rw="${d}">${lb}</button>
+              <input type="time" class="time-input rw-time" data-rt="${d}" value="${rem.times[d] || "19:00"}" ${rem.times[d] ? "" : "disabled"}>
+            </div>`).join("")}
         </div>
         <div class="setting-row">
           <div class="s-text"><b>🧊 Bùa giữ chuỗi: <span id="freeze-num">${S.getFreezes()}</span></b><span>Lỡ một ngày, hệ thống tự dùng Bùa để chuỗi không bị đứt. Kiếm thêm bằng cách hoàn thành nhiệm vụ hằng ngày và đạt mục tiêu tuần.</span></div>
@@ -1263,7 +1266,20 @@
       $("#sw-remind").classList.toggle("on", on);
       if (on) E.toast('<span class="t-ic">⏰</span> Đã bật nhắc học hằng ngày.');
     };
-    $("#remind-time").onchange = e => { S.setReminder(null, e.target.value); };
+    $("#remind-time") && ($("#remind-time").onchange = e => { S.setReminder(null, e.target.value); });
+    $$("#remind-week .rw-toggle").forEach(b => b.onclick = () => {
+      const d = b.getAttribute("data-rw");
+      const inp = $('.rw-time[data-rt="' + d + '"]');
+      const row = b.closest(".rw-day");
+      const nowOn = !row.classList.contains("on");
+      row.classList.toggle("on", nowOn);
+      inp.disabled = !nowOn;
+      S.setReminderDay(Number(d), nowOn ? (inp.value || "19:00") : "");
+    });
+    $$("#remind-week .rw-time").forEach(inp => inp.onchange = () => {
+      const d = Number(inp.getAttribute("data-rt"));
+      if (!inp.disabled) S.setReminderDay(d, inp.value);
+    });
     const gp = $("#go-parent"); if (gp) gp.onclick = () => go("#/phu-huynh");
     // Giọng giảng bài
     $$("#tts-persona .tab").forEach(t => t.onclick = () => {
@@ -1570,11 +1586,12 @@
     function finish() {
       stop();
       const mins = Math.max(1, Math.round(totalElapsed / 60));
-      S.recordStudyMinutes(mins);
+      // Phút học đã được bộ đếm toàn cục ghi liên tục (kể cả khi em chuyển trang) — không cộng lần hai.
+      timebankTick();
       gain(E.EXP.step);
       checkBadges(); refreshChrome();
       E.confetti();
-      E.toast('<span class="t-ic">🎉</span> Đã lưu <b>' + mins + ' phút</b> học! Mở khoá phần thưởng… ⚔️');
+      E.toast('<span class="t-ic">🎉</span> Buổi học ' + mins + " phút hoàn thành! Mở khoá phần thưởng… 🎮");
       setTimeout(() => go("#/game/thuong"), 1100);
     }
 
@@ -1586,9 +1603,215 @@
   }
 
   /* =======================================================================
-     GAME — ĐẤU TRƯỜNG TOÁN HỌC (phần thưởng giải trí)
+     KHU TRÒ CHƠI — hub + Đua xe tính nhanh + Mê cung đáp án + Đấu trường
      ===================================================================== */
   function renderGame(mode) {
+    if (mode === "arena") { renderArena(false); return; }
+    if (mode === "dua-xe") { renderRace(); return; }
+    if (mode === "me-cung") { renderMaze(); return; }
+    renderGameHub(mode === "thuong");
+  }
+
+  function renderGameHub(reward) {
+    setView(`
+      ${reward ? '<div class="arena-reward">🎁 <b>Học đủ mục tiêu hôm nay rồi!</b> Chọn một trò để xả hơi — chơi mà vẫn luyện não. 🧠</div>' : ""}
+      <div class="section-title"><span class="ic">🎮</span><h2>Khu trò chơi</h2></div>
+      <p class="soft mb">Mọi trò đều dùng Toán để thắng — chơi thoải mái, não vẫn chạy!</p>
+      <div class="game-hub">
+        <button class="game-card" data-g="dua-xe">
+          <div class="gc-emoji">🏎️</div><b>Đua xe tính nhanh</b>
+          <span>Tính nhẩm đúng để tăng tốc — về đích trước xe đối thủ!</span>
+        </button>
+        <button class="game-card" data-g="me-cung">
+          <div class="gc-emoji">🗺️</div><b>Phiêu lưu mê cung</b>
+          <span>Chọn đáp án đúng để mở đường, đưa nhà thám hiểm tới kho báu.</span>
+        </button>
+        <button class="game-card" data-g="arena">
+          <div class="gc-emoji">⚔️</div><b>Đấu trường Toán học</b>
+          <span>Hạ 3 quái vật bằng những câu trả lời chính xác và combo cháy!</span>
+        </button>
+      </div>`);
+    $$(".game-card").forEach(b => b.onclick = () => go("#/game/" + b.getAttribute("data-g")));
+  }
+
+  // câu tính nhanh (cho Đua xe): 4 lựa chọn
+  function quickMath() {
+    const r = n => 1 + ((Math.random() * n) | 0);
+    const kind = (Math.random() * 4) | 0;
+    let q, ans;
+    if (kind === 0) { const a = r(40) + 9, b = r(40) + 9; q = a + " + " + b; ans = a + b; }
+    else if (kind === 1) { const a = r(40) + 30, b = r(29); q = a + " − " + b; ans = a - b; }
+    else if (kind === 2) { const a = r(9) + 2, b = r(9) + 2; q = a + " × " + b; ans = a * b; }
+    else { const b = r(9) + 2, c = r(9) + 2; q = (b * c) + " : " + b; ans = c; }
+    const opts = [ans];
+    while (opts.length < 4) {
+      const d = ans + ((Math.random() * 10 | 0) - 5) + (opts.length);
+      if (d !== ans && d > 0 && opts.indexOf(d) === -1) opts.push(d);
+    }
+    for (let i = opts.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [opts[i], opts[j]] = [opts[j], opts[i]]; }
+    return { q: q + " = ?", options: opts.map(String), answer: opts.indexOf(ans) };
+  }
+
+  /* ---------- 🏎️ ĐUA XE TÍNH NHANH ---------- */
+  function renderRace() {
+    let me = 0, ai = 0, streak = 0, done = false, qStart = 0, current = null;
+    const AI_STEP = 0.55; // %, mỗi 300ms → về đích ~55 giây
+
+    setView(`<div class="race">
+      <div class="section-title"><span class="ic">🏎️</span><h2>Đua xe tính nhanh</h2></div>
+      <p class="soft" style="margin:0 0 10px">Tính đúng để <b>tăng tốc</b> (trả lời càng nhanh, xe vọt càng xa). Sai là xe khựng lại — cẩn thận nhé!</p>
+      <div class="race-track">
+        <div class="lane"><span class="car" id="car-me">🏎️</span><span class="flag">🏁</span></div>
+        <div class="lane"><span class="car" id="car-ai">🚙</span><span class="flag">🏁</span></div>
+      </div>
+      <div class="race-hud"><span>Em: <b id="race-me">0%</b></span><span>Đối thủ: <b id="race-ai">0%</b></span><span id="race-streak">🔥 ×0</span></div>
+      <div class="q-card mt"><div class="q-text" id="race-q"></div><div class="q-opts" id="race-opts"></div></div>
+      <div class="row mt"><button class="btn ghost" id="race-quit">⟵ Thoát</button></div>
+    </div>`);
+
+    function paint() {
+      $("#car-me").style.left = "calc(" + Math.min(me, 100) + "% - " + (Math.min(me, 100) * 0.34) + "px)";
+      $("#car-ai").style.left = "calc(" + Math.min(ai, 100) + "% - " + (Math.min(ai, 100) * 0.34) + "px)";
+      $("#race-me").textContent = Math.round(me) + "%";
+      $("#race-ai").textContent = Math.round(ai) + "%";
+      $("#race-streak").textContent = "🔥 ×" + streak;
+    }
+    function loadQ() {
+      current = quickMath();
+      if (window.App) window.App._race = { answer: current.answer };
+      $("#race-q").textContent = current.q;
+      $("#race-opts").innerHTML = current.options.map((o, i) => '<button class="q-opt" data-i="' + i + '">' + esc(o) + "</button>").join("");
+      $$("#race-opts .q-opt").forEach(b => b.onclick = () => pick(+b.dataset.i));
+      qStart = Date.now();
+    }
+    function pick(i) {
+      if (done) return;
+      const ok = i === current.answer;
+      if (ok) {
+        streak++;
+        const fast = Math.max(0, 4 - (Date.now() - qStart) / 1000); // thưởng tốc độ
+        me += 9 + Math.min(3, streak) + fast * 1.5;
+      } else {
+        streak = 0;
+        me = Math.max(0, me - 3);
+        E.toast("Ối, tính lại nào! 🛞");
+      }
+      paint();
+      if (me >= 100) return end(true);
+      loadQ();
+    }
+    function end(winFlag) {
+      if (done) return; done = true;
+      if (timerHandle) { clearInterval(timerHandle); timerHandle = null; }
+      if (winFlag) { S.addExp(30); S.log("race-win"); E.confetti(); refreshChrome(); }
+      setView(`<div class="arena"><div class="arena-end ${winFlag ? "win" : "lose"}">
+          <div class="arena-end-emoji">${winFlag ? "🏆" : "🐌"}</div>
+          <h2>${winFlag ? "VỀ ĐÍCH TRƯỚC!" : "Đối thủ về đích trước…"}</h2>
+          <p>${winFlag ? "Tốc độ tính nhẩm đỉnh thật! Nhận <b>+30 EXP</b> 🎉" : "Luyện tính nhẩm thêm chút là thắng ngay — thử lại nhé! 💪"}</p>
+          <div class="arena-end-actions">
+            <button class="btn primary" id="race-again">Đua lại</button>
+            <button class="btn ghost" id="race-hub">Trò khác</button>
+          </div></div></div>`);
+      $("#race-again").onclick = () => renderRace();
+      $("#race-hub").onclick = () => go("#/game");
+    }
+    $("#race-quit").onclick = () => go("#/game");
+    timerHandle = setInterval(() => {
+      if (done) return;
+      ai += AI_STEP;
+      paint();
+      if (ai >= 100) end(false);
+    }, 300);
+    paint(); loadQ();
+  }
+
+  /* ---------- 🗺️ PHIÊU LƯU MÊ CUNG ---------- */
+  function mazeQuestions() {
+    const out = [];
+    D.practice.weeks.forEach(w => w.questions.forEach(q => { if (q.type === "mc") out.push(q); }));
+    for (let i = out.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [out[i], out[j]] = [out[j], out[i]]; }
+    return out;
+  }
+  function renderMaze() {
+    // đường đi zíc-zắc 10 ô trên lưới 5×4
+    const PATH = [[0,0],[1,0],[2,0],[2,1],[2,2],[3,2],[4,2],[4,3],[3,3],[2,3]];
+    const COLS = 5, ROWS = 4, STEPS = PATH.length;
+    let pos = 0, hearts = 3, done = false;
+    let pool = mazeQuestions(), ptr = 0, current = null;
+
+    setView(`<div class="maze">
+      <div class="section-title"><span class="ic">🗺️</span><h2>Phiêu lưu mê cung</h2></div>
+      <p class="soft" style="margin:0 0 10px">Mỗi cánh cửa là một câu hỏi — chọn <b>đáp án đúng</b> để mở đường tới kho báu 💎. Sai mất 1 tim!</p>
+      <div class="maze-hud"><span id="maze-hearts">❤️❤️❤️</span><span id="maze-step">Bước 1/${STEPS}</span></div>
+      <div class="maze-grid" id="maze-grid" style="grid-template-columns:repeat(${COLS},1fr)"></div>
+      <div class="q-card mt"><div class="q-topic" id="maze-topic"></div><div class="q-text" id="maze-q"></div><div class="q-opts" id="maze-opts"></div></div>
+      <div class="row mt"><button class="btn ghost" id="maze-quit">⟵ Thoát</button></div>
+    </div>`);
+
+    function cellIndexOf(c, r) { return r * COLS + c; }
+    function paint() {
+      const g = $("#maze-grid");
+      const cells = [];
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) cells.push('<div class="mz-cell" data-i="' + cellIndexOf(c, r) + '"></div>');
+      g.innerHTML = cells.join("");
+      PATH.forEach((p, k) => {
+        const cell = g.children[cellIndexOf(p[0], p[1])];
+        cell.classList.add("path");
+        if (k < pos) cell.classList.add("walked");
+        if (k === pos) cell.innerHTML = "🧭";
+        if (k === STEPS - 1) cell.innerHTML = (k === pos ? "🧭" : "💎");
+      });
+      $("#maze-hearts").textContent = "❤️".repeat(hearts) + "🖤".repeat(3 - hearts);
+      $("#maze-step").textContent = "Bước " + Math.min(pos + 1, STEPS) + "/" + STEPS;
+    }
+    function nextQ() { if (ptr >= pool.length) { pool = mazeQuestions(); ptr = 0; } return pool[ptr++]; }
+    function loadQ() {
+      current = nextQ();
+      if (window.App) window.App._maze = { answer: current.answer };
+      $("#maze-topic").textContent = "Cánh cửa số " + (pos + 1);
+      $("#maze-q").textContent = current.q;
+      $("#maze-opts").innerHTML = current.options.map((o, i) => '<button class="q-opt" data-i="' + i + '">' + esc(o) + "</button>").join("");
+      $$("#maze-opts .q-opt").forEach(b => b.onclick = () => pick(+b.dataset.i));
+    }
+    function pick(i) {
+      if (done) return;
+      if (i === current.answer) {
+        pos++;
+        S.recordTopic && current.__lid && S.recordTopic(current.__lid, true);
+        if (pos >= STEPS - 0) { paint(); return end(true); }
+        paint();
+        E.toast('<span class="t-ic">🔓</span> Cửa mở! Tiến lên!');
+        loadQ();
+      } else {
+        hearts--;
+        paint();
+        if (hearts <= 0) return end(false);
+        E.toast("Cửa không mở… thử câu khác! (−1 ❤️)");
+        loadQ();
+      }
+    }
+    function end(winFlag) {
+      if (done) return; done = true;
+      if (winFlag) { S.addExp(30); S.log("maze-win"); E.confetti(); refreshChrome(); }
+      setView(`<div class="arena"><div class="arena-end ${winFlag ? "win" : "lose"}">
+          <div class="arena-end-emoji">${winFlag ? "💎" : "🕯️"}</div>
+          <h2>${winFlag ? "TÌM THẤY KHO BÁU!" : "Hết tim mất rồi…"}</h2>
+          <p>${winFlag ? "Vượt " + STEPS + " cánh cửa bằng kiến thức thật. Nhận <b>+30 EXP</b> 🎉" : "Ôn lại vài bài rồi quay lại — kho báu vẫn chờ em! 💪"}</p>
+          <div class="arena-end-actions">
+            <button class="btn primary" id="maze-again">Chơi lại</button>
+            <button class="btn ghost" id="maze-hub">Trò khác</button>
+          </div></div></div>`);
+      $("#maze-again").onclick = () => renderMaze();
+      $("#maze-hub").onclick = () => go("#/game");
+    }
+    $("#maze-quit").onclick = () => go("#/game");
+    paint(); loadQ();
+  }
+
+  /* =======================================================================
+     GAME — ĐẤU TRƯỜNG TOÁN HỌC (phần thưởng giải trí)
+     ===================================================================== */
+  function renderArena(mode) {
     const G = D.games;
     const reward = mode === "thuong";
 
@@ -1749,7 +1972,7 @@
           "</div>" +
         "</div></div>";
       setView(html);
-      $("#again").onclick = () => renderGame(mode);
+      $("#again").onclick = () => renderArena(mode);
       $("#home").onclick = () => go("#/dashboard");
       $("#study").onclick = () => go("#/lo-trinh");
     }
@@ -2502,6 +2725,93 @@
   function pad2(n) { return n < 10 ? "0" + n : "" + n; }
 
   /* =======================================================================
+     BỘ ĐẾM PHÚT HỌC TOÀN CỤC (không reset khi chuyển module)
+     ===================================================================== */
+  const TIMEBANK = { acc: 0, last: null, handle: null };
+  function timebankTick(now) {
+    now = now || Date.now();
+    const visible = !document.hidden;
+    if (TIMEBANK.last != null && visible) {
+      TIMEBANK.acc += Math.min(Math.max(0, now - TIMEBANK.last), 60000); // chống nhảy khi máy ngủ
+    }
+    TIMEBANK.last = visible ? now : null;
+    let credited = 0;
+    while (TIMEBANK.acc >= 60000) {
+      TIMEBANK.acc -= 60000;
+      const before = S.minutesToday();
+      S.recordStudyMinutes(1);
+      credited++;
+      const goal = (S.getGoals().min || 30);
+      if (before < goal && before + 1 >= goal) goalReached(goal);
+    }
+    if (credited) refreshChrome();
+    checkReminder(now);
+  }
+  function startTimebank() {
+    if (TIMEBANK.handle) return;
+    TIMEBANK.last = Date.now();
+    TIMEBANK.handle = setInterval(() => timebankTick(), 15000);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) { timebankTick(); TIMEBANK.last = null; }
+      else TIMEBANK.last = Date.now();
+    });
+  }
+
+  // 🎉 Đủ mục tiêu phút hôm nay → tự mở phần thưởng trò chơi
+  const GOAL_COUNTDOWN = 6;
+  function goalReached(goal) {
+    const today = (function () { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); })();
+    if (S.goalDayGet() === today || $("#goal-party")) return;
+    S.goalDaySet();
+    E.confetti();
+    const el = document.createElement("div");
+    el.id = "goal-party"; el.className = "tts-guide-backdrop";
+    el.innerHTML = `<div class="tts-guide" style="text-align:center">
+        <div style="font-size:46px">🎉</div>
+        <h3>Học đủ ${goal} phút hôm nay!</h3>
+        <p class="soft" style="margin:4px 0 12px">Não đã làm việc chăm chỉ — giờ là <b>phần thưởng trò chơi</b>!<br>
+        Tự vào khu trò chơi sau <b id="gp-count">${GOAL_COUNTDOWN}</b> giây…</p>
+        <div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap">
+          <button class="btn" id="gp-play">🎮 Chơi ngay</button>
+          <button class="btn ghost" id="gp-stay">Học tiếp đã 💪</button>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    let left = GOAL_COUNTDOWN;
+    const h = setInterval(() => {
+      left--; const c = $("#gp-count"); if (c) c.textContent = left;
+      if (left <= 0) { clearInterval(h); el.remove(); go("#/game/thuong"); }
+    }, 1000);
+    $("#gp-play").onclick = () => { clearInterval(h); el.remove(); go("#/game/thuong"); };
+    $("#gp-stay").onclick = () => { clearInterval(h); el.remove(); E.toast("Chăm quá! Khi nào muốn, khu 🎮 Trò chơi luôn mở."); };
+  }
+
+  // ⏰ Nhắc học theo lịch từng ngày trong tuần
+  function checkReminder(now) {
+    const rem = S.getReminder();
+    if (!rem.enabled) return;
+    const d = new Date(now || Date.now());
+    const t = rem.times[d.getDay()];
+    if (!t) return;
+    const cur = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+    if (cur < t) return;
+    const key = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + "|" + t;
+    if (rem.lastNotified === key) return;
+    const goal = S.getGoals().min || 30;
+    if (S.minutesToday() >= goal) { S.reminderMark(key); return; } // đã học đủ thì khỏi nhắc
+    S.reminderMark(key);
+    const msg = "⏰ Đến giờ học Toán rồi! Mục tiêu hôm nay: " + goal + " phút — vào bài thôi!";
+    try {
+      if (window.Notification && Notification.permission === "granted") {
+        new Notification("Toán 9 — Feynman", { body: msg });
+      }
+    } catch (e) {}
+    E.toast('<span class="t-ic">⏰</span> ' + msg);
+  }
+  // hook cho kiểm thử
+  if (window.App) window.App.TimeBank = { tick: timebankTick, _s: TIMEBANK };
+
+  /* =======================================================================
      ROUTER
      ===================================================================== */
   function route() {
@@ -2554,20 +2864,8 @@
   }
 
   function maybeRemind() {
-    try {
-      const r = S.getReminder();
-      if (!r || !r.enabled) return;
-      if (S.isStudiedToday()) return;
-      if (r.lastNotified === S.dateStr()) return;
-      const now = new Date();
-      const cur = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
-      if (cur < (r.time || "19:00")) return;
-      S.markReminded();
-      E.toast('<span class="t-ic">⏰</span> Đến giờ học rồi! Dành 30 phút cho bản thân nhé. 🔥');
-      if (window.Notification && Notification.permission === "granted") {
-        new Notification("Toán 9 — Đến giờ học!", { body: "Giữ chuỗi học hôm nay nhé 🔥" });
-      }
-    } catch (e) { /* bỏ qua */ }
+    // Bộ nhắc cũ đã được thay bằng lịch tuần (checkReminder) — gọi kiểm tra ngay khi mở app.
+    try { checkReminder(Date.now()); } catch (e) { /* bỏ qua */ }
   }
 
   function boot() {
@@ -2576,6 +2874,7 @@
 
     S.load();
     initProfileChip();
+    startTimebank();
 
     // theme: ưu tiên lựa chọn đã lưu, nếu chưa thì theo hệ thống
     const saved = S.getTheme();

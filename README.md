@@ -429,3 +429,20 @@ Cài đặt → Thành viên & Sao lưu → **⬇️ Xuất tệp** (tạo tệp
 > Ghi chú kỹ thuật: app cố tình không dùng máy chủ (không tài khoản, không phí, không lộ dữ liệu trẻ em ra ngoài). Nếu sau này cần **đồng bộ tự động + đăng nhập riêng từng người**, sẽ cần thêm backend (ví dụ Firebase — có gói miễn phí); mình có thể hướng dẫn khi bạn sẵn sàng.
 
 > Kiểm thử tự động: chip thành viên hiển thị đúng, bảng "Ai đang học?" thêm/chuyển hồ sơ (dữ liệu tách riêng đã test cấp storage: EXP mỗi hồ sơ độc lập, xoá hồ sơ dọn sạch khoá, chặn hồ sơ thứ 4), Xuất tệp tạo file tải về, Nhập tệp khôi phục và tải lại, manifest JSON hợp lệ, sw.js hợp lệ, đăng ký SW chỉ chạy trên http/https — 0 lỗi.
+
+---
+
+## ⏱️ Sửa bộ đếm phút học + Lịch nhắc tuần + Đủ 30' tự mở trò chơi (2 game mới)
+
+**1. Sửa lỗi thời gian bị "quay từ đầu" khi chuyển module.** Trước đây phút học chỉ được ghi khi bấm Kết thúc trong "Buổi học 30'" — chuyển sang trang khác là mất. Nay có **bộ đếm toàn cục**: em học ở BẤT KỲ đâu trong app (bài học, luyện tập, tư duy, flashcard…) đều được cộng dồn tự động từng phút và lưu ngay; chuyển module thoải mái không mất. Tạm dừng thông minh khi ẩn tab/khoá máy (không đếm gian). "Buổi học 30'" vẫn dùng được như bộ bấm giờ 4 chặng, và không còn cộng trùng.
+
+**2. Lịch nhắc học theo TỪNG NGÀY trong tuần.** Cài đặt → Duy trì thói quen: lưới **CN–T7**, bật/tắt từng ngày và chọn **giờ riêng cho mỗi ngày** (vd T2 19:00, T4 20:30, T7 nghỉ) để né lịch học các môn khác. Đến giờ (khi app đang mở) sẽ toast + thông báo hệ thống nếu đã cấp quyền; **đã học đủ mục tiêu thì không làm phiền**; mỗi mốc chỉ nhắc một lần/ngày.
+
+**3. Đủ 30 phút → tự mở phần thưởng trò chơi.** Ngay khi tổng phút hôm nay chạm mục tiêu (mặc định 30'), hiện màn ăn mừng 🎉 với đếm ngược 6 giây rồi **tự chuyển sang Khu trò chơi** (hoặc bấm "Chơi ngay"/"Học tiếp đã"). Mỗi ngày chỉ ăn mừng một lần.
+
+**4. Khu trò chơi mới (🎮) — 3 trò:**
+- **🏎️ Đua xe tính nhanh:** tính nhẩm (+, −, ×, :) đúng để tăng tốc — trả lời càng nhanh xe vọt càng xa; sai xe khựng lại; về đích trước xe đối thủ để thắng (+30 EXP).
+- **🗺️ Phiêu lưu mê cung:** bản đồ 10 cánh cửa; mỗi cửa là một câu hỏi lấy từ ngân hàng luyện tập Chương I–X — **chọn đáp án đúng** để mở đường; có 3 ❤️, sai mất tim; tới 💎 kho báu thắng (+30 EXP).
+- **⚔️ Đấu trường Toán học** (trò cũ) vẫn nguyên.
+
+> Kiểm thử tự động: học rải qua 3 module vẫn cộng đủ 3 phút (không reset); chạm 30' hiện overlay và chuyển đúng khu trò chơi, không lặp trong ngày; nhắc đúng lịch, đúng 1 lần, bật/đổi giờ/tắt từng ngày lưu chuẩn; Đua xe thắng sau chuỗi câu đúng (+30 EXP); Mê cung 10 ô đường, sai mất tim, tới kho báu thắng; Buổi học 30' không cộng trùng; mọi màn chạy được khi trình duyệt chặn bộ nhớ — 0 lỗi.

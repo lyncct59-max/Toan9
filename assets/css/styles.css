@@ -993,3 +993,40 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
 .profile-row.active { border-color: var(--brand); background: var(--brand-soft); }
 .profile-row .pf-emoji { font-size: 20px; }
 .profile-row .pf-now { margin-left: auto; font-size: 11.5px; font-weight: 800; color: var(--brand-strong, var(--brand-deep)); }
+
+/* =========================================================================
+   LỊCH NHẮC TUẦN · KHU TRÒ CHƠI · ĐUA XE · MÊ CUNG
+   ========================================================================= */
+.remind-week { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; padding: 4px 0 10px; }
+.rw-day { display: flex; flex-direction: column; gap: 5px; border: 1.5px solid var(--border); border-radius: 12px; padding: 7px; opacity: .65; }
+.rw-day.on { border-color: var(--brand); background: var(--brand-soft); opacity: 1; }
+.rw-toggle { border: 0; background: transparent; font-weight: 800; font-family: var(--font-body); cursor: pointer; color: var(--ink); font-size: 13px; }
+.rw-time { width: 100%; box-sizing: border-box; font-size: 12.5px; }
+
+.game-hub { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+.game-card {
+  text-align: left; cursor: pointer; display: grid; gap: 5px;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 16px;
+  font-family: var(--font-body); color: var(--ink); transition: transform .12s, border-color .15s;
+}
+.game-card:hover { transform: translateY(-2px); border-color: var(--brand); }
+.game-card .gc-emoji { font-size: 34px; }
+.game-card b { font-size: 15.5px; }
+.game-card span { font-size: 13px; color: var(--ink-soft); line-height: 1.45; }
+
+/* đua xe */
+.race-track { display: grid; gap: 10px; background: color-mix(in srgb, var(--ink) 6%, var(--surface)); border-radius: 14px; padding: 14px 10px; }
+.race-track .lane {
+  position: relative; height: 40px; border-radius: 10px;
+  background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--ink) 14%, var(--surface)) 0 26px, color-mix(in srgb, var(--ink) 8%, var(--surface)) 26px 52px);
+}
+.race-track .car { position: absolute; left: 0; top: 50%; transform: translateY(-50%); font-size: 26px; transition: left .25s ease; }
+.race-track .flag { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 20px; }
+.race-hud { display: flex; justify-content: space-between; gap: 10px; margin-top: 8px; font-size: 13.5px; color: var(--ink-soft); }
+
+/* mê cung */
+.maze-hud { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 8px; }
+.maze-grid { display: grid; gap: 6px; }
+.mz-cell { aspect-ratio: 1; border-radius: 10px; background: color-mix(in srgb, var(--ink) 8%, var(--surface)); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.mz-cell.path { background: color-mix(in srgb, var(--brand) 14%, var(--surface)); outline: 1.5px dashed color-mix(in srgb, var(--brand) 40%, transparent); }
+.mz-cell.walked { background: var(--brand-soft); outline-color: var(--brand); }

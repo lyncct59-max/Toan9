@@ -274,7 +274,20 @@
       freezes: getFreezes()
     };
   }
-  function getReminder() { return state.reminder || { enabled: false, time: "19:00", lastNotified: null }; }
+  function getReminder() {
+    if (!state.reminder) state.reminder = { enabled: false, time: "19:00", lastNotified: null };
+    if (!state.reminder.times) {
+      state.reminder.times = { 0: "", 1: "", 2: "", 3: "", 4: "", 5: "", 6: "" };
+      // di trú từ bản cũ: giờ chung cho T2–T6
+      if (state.reminder.time) { for (let d = 1; d <= 5; d++) state.reminder.times[d] = state.reminder.time; }
+    }
+    return state.reminder;
+  }
+  function setReminderDay(dow, val) {
+    getReminder().times[dow] = val || "";
+    save();
+  }
+  function reminderMark(key) { getReminder().lastNotified = key; save(); }
   function setReminder(enabled, time) {
     if (!state.reminder) state.reminder = { enabled: false, time: "19:00", lastNotified: null };
     if (enabled != null) state.reminder.enabled = !!enabled;
@@ -490,6 +503,10 @@
   }
   function recCount() { return Object.keys(recMetaAll()).length; }
 
+  /* ---------- Cờ đạt mục tiêu trong ngày ---------- */
+  function goalDayGet() { return state.goalDay || ""; }
+  function goalDaySet() { state.goalDay = dateStr(); save(); }
+
   /* ---------- Sao lưu / chuyển máy ---------- */
   function exportState() {
     return JSON.stringify({ app: "toan9-feynman", schema: SCHEMA, profile: currentProfile().name, t: Date.now(), state: state }, null, 1);
@@ -545,6 +562,7 @@
     getTheme, setTheme, getGoals, setGoals,
     // streak / lịch / phút
     recordStudyMinutes, effectiveStreak, minutesToday,
+    setReminderDay, reminderMark, goalDayGet, goalDaySet,
     calendarLast, daysStudiedThisWeek,
     // thói quen: nhiệm vụ ngày, Bùa giữ chuỗi, nhắc học
     ensureDaily, dailyCounts, dailyClaimed, claimDailyBonus,
