@@ -7,7 +7,7 @@
 (function (App) {
   "use strict";
 
-  const APP_VERSION = "v3.9 · 05/09/2026";
+  const APP_VERSION = "v4.0 · 05/09/2026";
 
   const S = App.Storage;
   const E = App.Engine;
@@ -72,7 +72,9 @@
   function setActive(base) {
     $$("[data-route]").forEach(a => {
       const r = a.getAttribute("data-route");
-      a.classList.toggle("active", r === base || (base === "hoc" && r === "lo-trinh"));
+      const on = r === base || (base === "hoc" && r === "lo-trinh");
+      a.classList.toggle("active", on);
+      if (on) { const g = a.closest(".nav-group"); if (g) g.classList.remove("collapsed"); }
     });
   }
 
@@ -3344,7 +3346,7 @@
   /* =======================================================================
      VIEW: SỔ TAY LỖI SAI (ôn lại chính câu đã sai theo lịch)
      ===================================================================== */
-  const MK_SOURCE_LABEL = { hoc: "Bài học", luyen: "Luyện tập", tuduy: "Rèn tư duy", kiemtra: "Kiểm tra", thithu: "Thi thử vào 10", ai: "AI ra đề", rama: "Góc Ramanujan" };
+  const MK_SOURCE_LABEL = { hoc: "Bài học", luyen: "Luyện tập", tuduy: "Rèn tư duy", kiemtra: "Kiểm tra", thithu: "Thi thử vào 10", ai: "AI ra đề", rama: "Góc Ramanujan", vohan: "Luyện vô hạn" };
 
   function renderMistakes() {
     const due = S.mistakesDueList();
@@ -4097,6 +4099,195 @@
   }
 
   /* =======================================================================
+     ♾️ LUYỆN VÔ HẠN — bài tập sinh tự động theo kỹ năng, không bao giờ cạn
+     ===================================================================== */
+  function renderInfinite(skillId) {
+    if (!skillId) {
+      setView(`<div class="section-title"><span class="ic">♾️</span><h2>Luyện vô hạn</h2></div>
+        <p class="soft mb">Mỗi lần bấm là một <b>bộ 10 câu mới</b>, số liệu khác nhau — luyện tới khi thành phản xạ. Chọn kỹ năng:</p>
+        <div class="game-hub">
+          ${D.skills.map(sk => {
+            const st = S.topicStat ? S.topicStat(sk.lessonId) : null;
+            return `<button class="skill-card" data-skill="${sk.id}">
+              <div class="gc-emoji">${sk.emoji}</div><b>${esc(sk.title)}</b>
+              <span>${st && st.total ? "Độ chính xác: " + Math.round(st.acc * 100) + "% (" + st.total + " câu)" : "Chưa luyện"}</span>
+            </button>`;
+          }).join("")}
+        </div>`);
+      $$("[data-skill]").forEach(b => b.onclick = () => go("#/vo-han/" + b.getAttribute("data-skill")));
+      return;
+    }
+    const sk = D.skills.find(x => x.id === skillId);
+    if (!sk) { renderInfinite(); return; }
+    const qs = []; for (let i = 0; i < 10; i++) qs.push(sk.gen());
+    let answered = 0, correct = 0;
+    setView(`<div class="section-title"><span class="ic">${sk.emoji}</span><h2>${esc(sk.title)}</h2></div>
+      <div class="row between mb" style="align-items:center"><span class="soft">Bộ 10 câu sinh ngẫu nhiên · <b id="inf-score">0/0</b></span>
+        <button class="btn ghost sm" id="inf-new">🔁 Bộ khác</button></div>
+      <div id="inf-host">${qs.map((q, i) => renderQuestion(q, i, "inf")).join("")}</div>
+      <div class="card mt" id="inf-done" hidden></div>
+      <div class="row mt"><button class="btn ghost sm" id="inf-back">⟵ Chọn kỹ năng khác</button></div>`);
+    $("#inf-new").onclick = () => renderInfinite(skillId);
+    $("#inf-back").onclick = () => go("#/vo-han");
+    qs.forEach((q, i) => {
+      const card = $('.q-card[data-q="' + i + '"]');
+      const solHost = card.querySelector(".sol-host");
+      wireHint(card, q);
+      let done = false;
+      const settle = ok => {
+        if (done) return; done = true;
+        answered++; if (ok) correct++;
+        $("#inf-score").textContent = correct + "/" + answered;
+        solHost.innerHTML = solutionHtml(q);
+        S.recordTopic(sk.lessonId, ok);
+        if (ok) { gain(E.EXP.quizCorrect); refreshChrome(); }
+        else noteMistake(q, false, { source: "vohan", lessonId: sk.lessonId, label: sk.title });
+        if (answered === qs.length) {
+          const pct = Math.round(correct / qs.length * 100);
+          const box = $("#inf-done"); box.hidden = false;
+          box.innerHTML = "<b>" + (pct >= 90 ? "🏆 Xuất sắc!" : pct >= 70 ? "👍 Tốt lắm!" : "💪 Cứ luyện tiếp!") + "</b> Đúng " + correct + "/" + qs.length + " (" + pct + "%). " +
+            (pct >= 90 ? "Kỹ năng này đã thành phản xạ — chuyển sang kỹ năng khác nhé." : "Làm thêm một bộ nữa để chắc tay.") +
+            '<div class="row mt-sm" style="gap:8px"><button class="btn sm" id="inf-again">🔁 Bộ mới ngay</button></div>';
+          if (pct >= 90) E.confetti();
+          $("#inf-again").onclick = () => renderInfinite(skillId);
+        }
+      };
+      if (q.type === "mc") {
+        const opts = $$(".opt", card);
+        opts.forEach(btn => btn.onclick = () => {
+          if (done) return;
+          const k = Number(btn.getAttribute("data-opt"));
+          const ok = E.checkMc(k, q);
+          btn.classList.add(ok ? "correct" : "wrong", "selected");
+          if (!ok) opts[q.answer].classList.add("correct");
+          opts.forEach(o => o.classList.add("locked"));
+          settle(ok);
+        });
+      } else {
+        const input = card.querySelector("[data-fill]");
+        const check = card.querySelector("[data-check]");
+        const go2 = () => {
+          if (done) return;
+          const ok = E.checkFill(input.value, q);
+          input.classList.add(ok ? "correct" : "wrong"); input.disabled = true; check.disabled = true;
+          if (!ok) solHost.insertAdjacentHTML("afterbegin", '<p class="mt-sm" style="color:var(--rose-500);font-weight:700">Đáp án đúng: ' + esc(q.answer) + "</p>");
+          settle(ok);
+        };
+        check.onclick = go2;
+        input.addEventListener("keydown", e => { if (e.key === "Enter") go2(); });
+      }
+    });
+  }
+
+  /* =======================================================================
+     ✍️ TẬP VIẾT CHỨNG MINH HÌNH HỌC — sắp xếp bước + chọn căn cứ
+     ===================================================================== */
+  function renderProofs(pid) {
+    if (!pid) {
+      setView(`<div class="section-title"><span class="ic">✍️</span><h2>Tập viết chứng minh</h2></div>
+        <div class="card rama-intro">
+          <p style="margin:0 0 6px"><b>Hình học chứng minh chiếm 2,5 điểm đề thi vào 10</b> — và là phần nhiều bạn mất điểm nhất, không phải vì không hiểu, mà vì <b>không biết viết cho có căn cứ</b>.</p>
+          <p class="soft" style="margin:0">Ở đây em luyện đúng kỹ năng đó: các bước chứng minh bị xáo trộn, em <b>sắp lại đúng thứ tự</b> và <b>chọn căn cứ</b> (định lí/tính chất) cho các bước then chốt — y như cách giám khảo chấm.</p>
+        </div>
+        <div class="rama-list mt">
+          ${D.proofs.map((p, i) => {
+            const st = S.lesson("proof:" + p.id);
+            return `<button class="rama-card ${st.done ? "done" : ""}" data-proof="${p.id}">
+              <span class="rc-emoji">${p.emoji}</span>
+              <span class="rc-body"><b>${esc(p.title)}</b><span class="rc-meta">${st.done ? "✅ Đã hoàn thành" : "Bài " + (i + 1) + " · " + p.steps.length + " bước"}</span></span>
+              <span class="rc-go">→</span></button>`;
+          }).join("")}
+        </div>`);
+      $$("[data-proof]").forEach(b => b.onclick = () => go("#/chung-minh/" + b.getAttribute("data-proof")));
+      return;
+    }
+    const P = D.proofs.find(x => x.id === pid);
+    if (!P) { renderProofs(); return; }
+    // xáo trộn bước
+    const order = P.steps.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [order[i], order[j]] = [order[j], order[i]]; }
+    if (order.every((v, i) => v === i)) order.reverse();
+    let placed = [];   // chỉ số bước đã đặt theo thứ tự em chọn
+    let phase = 1;
+
+    function render() {
+      setView(`<div class="proof-view">
+        <div class="rama-head"><span class="rh-emoji">${P.emoji}</span><div><b>${esc(P.title)}</b><div class="soft" style="font-size:12.5px">Tập viết chứng minh · ${phase === 1 ? "Bước 1/2: sắp xếp" : "Bước 2/2: căn cứ"}</div></div></div>
+        <div class="card proof-gt"><div><b>Giả thiết:</b> ${P.given}</div><div class="mt-sm"><b>Kết luận:</b> ${P.prove}</div></div>
+        <p class="rama-hint">💡 ${P.tip}</p>
+        ${phase === 1 ? `
+          <div class="section-title mt"><span class="ic">🔀</span><h2>Bấm các bước theo đúng thứ tự</h2></div>
+          <div class="proof-pool" id="proof-pool">
+            ${order.filter(i => placed.indexOf(i) === -1).map(i => `<button class="proof-step" data-st="${i}">${P.steps[i].t}</button>`).join("")}
+          </div>
+          <div class="section-title mt"><span class="ic">📝</span><h2>Bài chứng minh của em</h2></div>
+          <ol class="proof-list" id="proof-list">
+            ${placed.map((i, k) => `<li><span>${P.steps[i].t}</span><button class="proof-undo" data-un="${k}" title="Bỏ bước này">✕</button></li>`).join("")}
+            ${placed.length ? "" : '<li class="soft" style="list-style:none">Chưa có bước nào — bấm vào các bước ở trên.</li>'}
+          </ol>
+          <button class="btn primary block mt" id="proof-check1" ${placed.length === P.steps.length ? "" : "disabled"}>Kiểm tra thứ tự</button>`
+        : `
+          <div class="section-title mt"><span class="ic">📐</span><h2>Chọn căn cứ cho các bước then chốt</h2></div>
+          <ol class="proof-list final" id="proof-final">
+            ${P.steps.map((st, i) => `<li><span>${st.t}</span>${st.why ? `<div class="why-opts" data-w="${i}">${shuffled(st.whys).map(w => `<button class="why-opt" data-why="${esc(w)}">${esc(w)}</button>`).join("")}</div>` : ""}</li>`).join("")}
+          </ol>
+          <button class="btn primary block mt" id="proof-check2">Chấm bài chứng minh</button>`}
+        <div class="row mt"><button class="btn ghost sm" id="proof-back">⟵ Danh sách bài</button></div>
+      </div>`);
+      $("#proof-back").onclick = () => go("#/chung-minh");
+      if (phase === 1) {
+        $$(".proof-step").forEach(b => b.onclick = () => { placed.push(+b.getAttribute("data-st")); render(); });
+        $$(".proof-undo").forEach(b => b.onclick = () => { placed.splice(+b.getAttribute("data-un"), 1); render(); });
+        const chk = $("#proof-check1");
+        chk.onclick = () => {
+          const ok = placed.every((v, i) => v === i);
+          if (ok) { E.toast('<span class="t-ic">✅</span> Thứ tự chuẩn! Giờ ghi căn cứ cho từng bước.'); phase = 2; render(); }
+          else {
+            const firstWrong = placed.findIndex((v, i) => v !== i);
+            E.toast("⚠️ Bước số " + (firstWrong + 1) + " chưa đúng chỗ — nghĩ xem bước đó cần điều gì trước nó?");
+            placed = placed.slice(0, firstWrong); render();
+          }
+        };
+      } else {
+        $$(".why-opts").forEach(box => $$(".why-opt", box).forEach(b => b.onclick = () => {
+          $$(".why-opt", box).forEach(x => x.classList.toggle("selected", x === b));
+        }));
+        $("#proof-check2").onclick = () => {
+          let need = 0, got = 0;
+          P.steps.forEach((st, i) => {
+            if (!st.why) return; need++;
+            const box = $('.why-opts[data-w="' + i + '"]');
+            const sel = box.querySelector(".why-opt.selected");
+            const ok = sel && sel.getAttribute("data-why") === st.why;
+            if (ok) got++;
+            $$(".why-opt", box).forEach(x => { x.classList.add("locked"); if (x.getAttribute("data-why") === st.why) x.classList.add("correct"); else if (x === sel) x.classList.add("wrong"); });
+          });
+          finish(need, got);
+        };
+      }
+    }
+    function shuffled(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
+    function finish(need, got) {
+      const full = got === need;
+      const first = !S.lesson("proof:" + P.id).done;
+      if (full) { S.setLessonDone("proof:" + P.id); if (first) gain(E.EXP.feynman); E.confetti(); }
+      else gain(E.EXP.quizCorrect * got);
+      refreshChrome();
+      const btn = $("#proof-check2"); if (btn) btn.remove();
+      const res = document.createElement("div");
+      res.className = "mk-result " + (full ? "ok" : "no");
+      res.innerHTML = (full
+        ? "🏆 <b>Bài chứng minh hoàn chỉnh!</b> Đúng thứ tự và đủ " + need + " căn cứ — đây chính là bài được điểm tối đa khi thi." + (first ? " <b>+" + E.EXP.feynman + " EXP</b>" : "")
+        : "📝 Thứ tự đúng, căn cứ đúng " + got + "/" + need + ". Căn cứ đúng đã tô xanh — <b>đọc kỹ tên định lí</b>, thi thật thiếu căn cứ là mất điểm dù đáp án đúng.")
+        + '<div class="row mt-sm" style="gap:8px"><button class="btn sm" id="proof-again">Làm lại</button><button class="btn ghost sm" id="proof-list-btn">Bài khác</button></div>';
+      $("#proof-final").insertAdjacentElement("afterend", res);
+      $("#proof-again").onclick = () => renderProofs(P.id);
+      $("#proof-list-btn").onclick = () => go("#/chung-minh");
+    }
+    render();
+  }
+
+  /* =======================================================================
      ROUTER
      ===================================================================== */
   function route() {
@@ -4111,7 +4302,7 @@
       dashboard: "Trang chủ", "lo-trinh": "Lộ trình", flashcard: "Flashcard",
       "on-tap": "Ôn tập", mentor: "AI Mentor", "thanh-tich": "Thành tích",
       "cai-dat": "Cài đặt", session: "Buổi học 30'", game: "Đấu trường", "luyen-tap": "Luyện tập",
-      "phu-huynh": "Góc phụ huynh", "tu-duy": "Rèn tư duy", "kiem-tra": "Kiểm tra định kỳ", "tien-bo": "Tiến bộ", "loi-sai": "Sổ tay lỗi sai", "ban-do": "Bản đồ kiến thức", "thi-thu": "Thi thử vào 10", "ai-de": "AI ra đề", "ramanujan": "Góc Ramanujan"
+      "phu-huynh": "Góc phụ huynh", "tu-duy": "Rèn tư duy", "kiem-tra": "Kiểm tra định kỳ", "tien-bo": "Tiến bộ", "loi-sai": "Sổ tay lỗi sai", "ban-do": "Bản đồ kiến thức", "thi-thu": "Thi thử vào 10", "ai-de": "AI ra đề", "ramanujan": "Góc Ramanujan", "vo-han": "Luyện vô hạn", "chung-minh": "Tập viết chứng minh"
     };
     if (base !== "hoc") titleEl.textContent = titles[base] || "Toán 9";
     setActive(base);
@@ -4135,6 +4326,8 @@
       case "thi-thu": if (parts[1]) renderExam(parts[1]); else renderExamHub(); break;
       case "ai-de": renderAiDrill(); break;
       case "ramanujan": if (parts[1]) renderRama(parts[1]); else renderRamaHub(); break;
+      case "vo-han": renderInfinite(parts[1]); break;
+      case "chung-minh": renderProofs(parts[1]); break;
       case "kiem-tra": renderTest(); break;
       case "tien-bo": renderProgress(); break;
       default: renderDashboard();
@@ -4165,6 +4358,8 @@
     S.load();
     initProfileChip();
     startTimebank();
+    // menu nhóm: bấm tiêu đề để đóng/mở; nhớ trạng thái trong phiên
+    $$(".nav-group .nav-head").forEach(h => h.onclick = () => h.parentNode.classList.toggle("collapsed"));
     // Tự render công thức KaTeX cho cả nội dung chèn động (lời giải, bước học, hook…)
     try {
       if (window.MutationObserver && viewEl) {

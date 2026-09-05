@@ -3379,6 +3379,197 @@
     }
   ];
 
+
+  /* ===================== ♾️ LUYỆN VÔ HẠN — bộ sinh bài tập theo kỹ năng ===================== */
+  function _gi(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function _gp(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function _mcFrom(correct, wrongs) {
+    const opts = [String(correct)].concat(wrongs.map(String).filter((w, i, arr) => w !== String(correct) && arr.indexOf(w) === i)).slice(0, 4);
+    let pad = 1; while (opts.length < 4) { const cand = isNaN(Number(correct)) ? String(correct) + " + " + pad : String(Number(correct) + pad * 7); if (opts.indexOf(cand) === -1) opts.push(cand); pad++; }
+    for (let i = opts.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; }
+    return { options: opts, answer: opts.indexOf(String(correct)) };
+  }
+  const SKILLS = [
+    { id: "s-can", emoji: "√", title: "Rút gọn căn thức", lessonId: "khai-can",
+      gen: function () {
+        const base = _gp([2, 3, 5, 7]);
+        const k = _gi(2, 9);
+        const n = k * k * base;
+        const wrong = [k + "√" + (base * k), (k - 1) + "√" + base, k * base + "√" + base];
+        return Object.assign({ type: "mc", q: "Rút gọn √" + n + ".",
+          sol: [n + " = " + (k * k) + " · " + base, "√" + n + " = √" + (k * k) + " · √" + base + " = " + k + "√" + base] },
+          _mcFrom(k + "√" + base, wrong));
+      } },
+    { id: "s-can-cong", emoji: "➕", title: "Cộng trừ căn đồng dạng", lessonId: "rut-gon-can",
+      gen: function () {
+        const base = _gp([2, 3, 5]);
+        const a = _gi(2, 6), b = _gi(1, 5), c = _gi(1, 4);
+        const val = a - b + c;
+        const q = "Tính " + a + "√" + base + " − " + b + "√" + base + " + " + c + "√" + base + ".";
+        const txt = v => v === 0 ? "0" : (v === 1 ? "" : v) + "√" + base;
+        return Object.assign({ type: "mc", q: q, sol: ["Các căn đồng dạng: (" + a + " − " + b + " + " + c + ")√" + base, "= " + txt(val)] },
+          _mcFrom(txt(val), [txt(val + 2), txt(a + b + c), txt(val - 1 || val + 3)]));
+      } },
+    { id: "s-he", emoji: "🧩", title: "Giải hệ phương trình", lessonId: "he-phuong-trinh",
+      gen: function () {
+        const x = _gi(-4, 6), y = _gi(-4, 6);
+        const a = _gi(1, 3), b = _gi(1, 3), c = a * x + b * y;
+        const d = _gi(1, 3), e = -_gi(1, 3), f = d * x + e * y;
+        const fmt = (k, v) => (k === 1 ? "" : k === -1 ? "−" : (k < 0 ? "−" + (-k) : k)) + v;
+        const line1 = fmt(a, "x") + " + " + fmt(b, "y") + " = " + c;
+        const line2 = fmt(d, "x") + " " + (e < 0 ? "− " + (-e === 1 ? "" : -e) : "+ " + e) + "y = " + f;
+        const which = _gp(["x", "y"]);
+        const ans = which === "x" ? x : y;
+        return { type: "fill", q: "Giải hệ: " + line1 + " và " + line2 + ". Tìm " + which + ".", answer: String(ans), accept: [String(ans), which + "=" + ans],
+          sol: ["Dùng phép cộng đại số hoặc phép thế để khử một ẩn", "Nghiệm của hệ: x = " + x + ", y = " + y, "Thử lại: " + a + "·" + x + " + " + b + "·" + y + " = " + c + " ✓"] };
+      } },
+    { id: "s-bac-hai", emoji: "🔷", title: "Giải phương trình bậc hai", lessonId: "phuong-trinh-bac-hai",
+      gen: function () {
+        const r1 = _gi(-6, 6), r2 = _gi(-6, 6);
+        const S = r1 + r2, P = r1 * r2;
+        const bTxt = S === 0 ? "" : (S > 0 ? " − " + (S === 1 ? "" : S) + "x" : " + " + (-S === 1 ? "" : -S) + "x");
+        const cTxt = P === 0 ? "" : (P > 0 ? " + " + P : " − " + (-P));
+        const q = "Phương trình x²" + bTxt + cTxt + " = 0 có nghiệm lớn hơn (hoặc nghiệm kép) là?";
+        const big = Math.max(r1, r2);
+        return { type: "fill", q: q, answer: String(big), accept: [String(big), "x=" + big],
+          sol: ["Tìm hai số có tổng " + S + " và tích " + P + " (Vi-ét): " + r1 + " và " + r2,
+                "Hoặc dùng Δ = b² − 4ac = " + (S * S - 4 * P) + " → x = (" + S + " ± √" + (S * S - 4 * P) + ")/2",
+                "Nghiệm lớn hơn: " + big] };
+      } },
+    { id: "s-viet", emoji: "⚡", title: "Định lí Vi-ét", lessonId: "he-thuc-vi-et",
+      gen: function () {
+        const a = _gp([1, 1, 2, 3]), b = _gi(-9, 9), c = _gi(-9, 9);
+        const want = _gp(["tổng", "tích"]);
+        const val = want === "tổng" ? -b / a : c / a;
+        const fmtNum = v => Number.isInteger(v) ? String(v) : (v < 0 ? "−" : "") + Math.abs(v * a) + "/" + a;
+        const bT = b === 0 ? "" : (b > 0 ? " + " + (b === 1 ? "" : b) + "x" : " − " + (-b === 1 ? "" : -b) + "x");
+        const cT = c === 0 ? "" : (c > 0 ? " + " + c : " − " + (-c));
+        const q = "Giả sử phương trình " + (a === 1 ? "" : a) + "x²" + bT + cT + " = 0 có hai nghiệm x₁, x₂. Tính " + (want === "tổng" ? "x₁ + x₂" : "x₁·x₂") + ".";
+        const cand = [b / a, c / a, -c / a, -b / a, b, c, -b, -c, val + 1, val - 1, val + 2, val * 2].map(fmtNum);
+        const wrongs = []; cand.forEach(w => { if (w !== fmtNum(val) && wrongs.indexOf(w) === -1 && wrongs.length < 3) wrongs.push(w); });
+        return Object.assign({ type: "mc", q: q, sol: ["Vi-ét: x₁ + x₂ = −b/a, x₁·x₂ = c/a", (want === "tổng" ? "x₁ + x₂ = −(" + b + ")/" + a : "x₁·x₂ = " + c + "/" + a) + " = " + fmtNum(val)] },
+          _mcFrom(fmtNum(val), wrongs));
+      } },
+    { id: "s-luong-giac", emoji: "📐", title: "Tỉ số lượng giác góc nhọn", lessonId: "ti-so-luong-giac",
+      gen: function () {
+        const tri = _gp([[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17], [9, 12, 15]]);
+        const [a, b, c] = tri;  // vuông tại A, AB = a (đối B? ta đặt rõ)
+        // Tam giác ABC vuông tại A, AB = a, AC = b, BC = c. Góc B: đối = AC = b, kề = AB = a
+        const which = _gp(["sin", "cos", "tan"]);
+        const val = which === "sin" ? b + "/" + c : which === "cos" ? a + "/" + c : b + "/" + a;
+        const wrongs = [a + "/" + c, b + "/" + c, b + "/" + a, a + "/" + b].filter(v => v !== val);
+        return Object.assign({ type: "mc", q: "Tam giác ABC vuông tại A có AB = " + a + ", AC = " + b + ", BC = " + c + ". Tính " + which + " B.",
+          sol: ["Với góc B: cạnh đối là AC = " + b + ", cạnh kề là AB = " + a + ", huyền BC = " + c,
+                which + " B = " + (which === "sin" ? "đối/huyền" : which === "cos" ? "kề/huyền" : "đối/kề") + " = " + val] },
+          _mcFrom(val, wrongs));
+      } },
+    { id: "s-goc-tron", emoji: "⭕", title: "Góc ở tâm & góc nội tiếp", lessonId: "goc-noi-tiep",
+      gen: function () {
+        const arc = _gp([40, 50, 60, 70, 80, 100, 110, 120, 140, 150]);
+        const kind = _gp(["nt", "tam"]);
+        if (kind === "nt") return Object.assign({ type: "mc", q: "Góc nội tiếp chắn cung có số đo " + arc + "°. Số đo góc nội tiếp là:",
+          sol: ["Góc nội tiếp bằng nửa số đo cung bị chắn", arc + "° : 2 = " + (arc / 2) + "°"] }, _mcFrom(arc / 2 + "°", [arc + "°", (arc * 2) + "°", (180 - arc) + "°"]));
+        return Object.assign({ type: "mc", q: "Góc nội tiếp chắn một cung có số đo " + (arc / 2) + "°. Góc ở tâm cùng chắn cung đó bằng:",
+          sol: ["Góc ở tâm bằng số đo cung, góc nội tiếp bằng nửa cung", "Góc ở tâm = 2 × " + (arc / 2) + "° = " + arc + "°"] }, _mcFrom(arc + "°", [(arc / 2) + "°", (arc / 4) + "°", (180 - arc / 2) + "°"]));
+      } },
+    { id: "s-thuc-te", emoji: "🛒", title: "Bài toán thực tế (phần trăm, chuyển động)", lessonId: "ham-so-bac-nhat",
+      gen: function () {
+        if (Math.random() < 0.5) {
+          const goc = _gi(2, 9) * 100, pct = _gp([10, 20, 25, 30, 40, 50]);
+          const sau = goc * (100 - pct) / 100;
+          return { type: "fill", q: "Một món hàng giảm giá " + pct + "% còn " + sau + " nghìn đồng. Giá gốc là bao nhiêu nghìn đồng?", answer: String(goc), accept: [String(goc)],
+            sol: ["Giảm " + pct + "% → còn " + (100 - pct) + "% giá gốc", "Giá gốc = " + sau + " : " + ((100 - pct) / 100) + " = " + goc] };
+        }
+        const v = _gp([30, 40, 45, 50, 60]), t = _gp([1.5, 2, 2.5, 3]);
+        const s = v * t;
+        return { type: "fill", q: "Ô tô đi với vận tốc " + v + " km/h trong " + t + " giờ. Quãng đường đi được là bao nhiêu km?", answer: String(s), accept: [String(s)],
+          sol: ["Quãng đường = vận tốc × thời gian", s + " = " + v + " × " + t] };
+      } }
+  ];
+
+
+  /* ===================== ✍️ TẬP VIẾT CHỨNG MINH HÌNH HỌC ===================== */
+  // Mỗi bài: các bước ĐÚNG THỨ TỰ; bước có "why" là bước then chốt phải chọn lý do.
+  const PROOFS = [
+    { id: "p-tu-giac-nt-1", emoji: "🔷", title: "Tứ giác có hai góc vuông đối nhau nội tiếp",
+      given: "Tam giác ABC, hai đường cao BE và CF cắt nhau tại H.",
+      prove: "Tứ giác AEHF nội tiếp.",
+      tip: "Muốn chứng minh tứ giác nội tiếp, hãy tìm hai góc đối có tổng 180°, hoặc hai đỉnh kề cùng nhìn một cạnh dưới góc bằng nhau.",
+      steps: [
+        { t: "BE là đường cao nên BE ⊥ AC, suy ra ∠AEH = 90°." },
+        { t: "CF là đường cao nên CF ⊥ AB, suy ra ∠AFH = 90°." },
+        { t: "Xét tứ giác AEHF có ∠AEH + ∠AFH = 90° + 90° = 180°.", why: "Tổng hai góc đối của tứ giác bằng 180°",
+          whys: ["Tổng hai góc đối của tứ giác bằng 180°", "Hai góc kề bù", "Định lí Pythagore"] },
+        { t: "Vậy tứ giác AEHF nội tiếp (dấu hiệu tứ giác có tổng hai góc đối bằng 180°).", why: "Dấu hiệu nhận biết tứ giác nội tiếp",
+          whys: ["Dấu hiệu nhận biết tứ giác nội tiếp", "Tính chất đường trung trực", "Hai tam giác đồng dạng"] }
+      ] },
+    { id: "p-tu-giac-nt-2", emoji: "👀", title: "Hai đỉnh cùng nhìn một cạnh dưới góc vuông",
+      given: "Tam giác ABC, hai đường cao BE và CF.",
+      prove: "Tứ giác BFEC nội tiếp.",
+      tip: "Khi hai đỉnh kề nhau cùng nhìn một cạnh dưới góc 90°, cả bốn điểm nằm trên đường tròn đường kính là cạnh đó.",
+      steps: [
+        { t: "CF ⊥ AB nên ∠BFC = 90°." },
+        { t: "BE ⊥ AC nên ∠BEC = 90°." },
+        { t: "Hai điểm F và E cùng nhìn đoạn BC dưới một góc 90°.", why: "Quỹ tích cung chứa góc (góc nhìn đoạn thẳng)",
+          whys: ["Quỹ tích cung chứa góc (góc nhìn đoạn thẳng)", "Định lí Ta-lét", "Tính chất tia phân giác"] },
+        { t: "Do đó F, E thuộc đường tròn đường kính BC.", why: "Góc nội tiếp chắn nửa đường tròn là góc vuông",
+          whys: ["Góc nội tiếp chắn nửa đường tròn là góc vuông", "Hai góc so le trong bằng nhau", "Định lí Pythagore đảo"] },
+        { t: "Vậy bốn điểm B, F, E, C cùng thuộc một đường tròn, tức tứ giác BFEC nội tiếp." }
+      ] },
+    { id: "p-tiep-tuyen", emoji: "📏", title: "Hai tiếp tuyến cắt nhau & tứ giác nội tiếp",
+      given: "Từ điểm A ngoài đường tròn (O), kẻ hai tiếp tuyến AB, AC (B, C là tiếp điểm).",
+      prove: "Tứ giác ABOC nội tiếp và OA ⊥ BC.",
+      tip: "Tiếp tuyến luôn vuông góc với bán kính tại tiếp điểm — đây là 'chìa khoá' mở hầu hết bài về tiếp tuyến.",
+      steps: [
+        { t: "AB là tiếp tuyến tại B nên AB ⊥ OB, suy ra ∠ABO = 90°.", why: "Tiếp tuyến vuông góc với bán kính tại tiếp điểm",
+          whys: ["Tiếp tuyến vuông góc với bán kính tại tiếp điểm", "Hai góc đối đỉnh", "Định lí về góc ngoài tam giác"] },
+        { t: "Tương tự, AC là tiếp tuyến tại C nên ∠ACO = 90°." },
+        { t: "Tứ giác ABOC có ∠ABO + ∠ACO = 180° nên nội tiếp." },
+        { t: "Theo tính chất hai tiếp tuyến cắt nhau: AB = AC; lại có OB = OC = R.", why: "Tính chất hai tiếp tuyến cắt nhau",
+          whys: ["Tính chất hai tiếp tuyến cắt nhau", "Hệ thức lượng trong tam giác vuông", "Định lí đường trung bình"] },
+        { t: "A và O cùng cách đều hai điểm B, C nên OA là đường trung trực của BC.", why: "Điểm cách đều hai đầu đoạn thẳng nằm trên trung trực",
+          whys: ["Điểm cách đều hai đầu đoạn thẳng nằm trên trung trực", "Tổng ba góc trong tam giác", "Góc tạo bởi tia tiếp tuyến và dây"] },
+        { t: "Vậy OA ⊥ BC." }
+      ] },
+    { id: "p-nua-tron", emoji: "🌓", title: "Góc nội tiếp chắn nửa đường tròn",
+      given: "Nửa đường tròn (O) đường kính AB, điểm M trên nửa đường tròn (M ≠ A, B), MH ⊥ AB tại H.",
+      prove: "MH² = HA · HB.",
+      tip: "Thấy đường kính → nghĩ ngay tới góc vuông; thấy tam giác vuông có đường cao → nghĩ tới hệ thức lượng.",
+      steps: [
+        { t: "∠AMB là góc nội tiếp chắn nửa đường tròn nên ∠AMB = 90°.", why: "Góc nội tiếp chắn nửa đường tròn là góc vuông",
+          whys: ["Góc nội tiếp chắn nửa đường tròn là góc vuông", "Góc ở tâm bằng số đo cung", "Hai góc kề bù"] },
+        { t: "Suy ra tam giác AMB vuông tại M." },
+        { t: "Trong tam giác vuông AMB, MH là đường cao ứng với cạnh huyền AB." },
+        { t: "Theo hệ thức lượng trong tam giác vuông: MH² = HA · HB.", why: "Hệ thức lượng trong tam giác vuông (h² = b'·c')",
+          whys: ["Hệ thức lượng trong tam giác vuông (h² = b'·c')", "Định lí Ta-lét", "Tính chất đường phân giác"] }
+      ] },
+    { id: "p-dong-dang", emoji: "🔺", title: "Hai tam giác đồng dạng từ góc nội tiếp",
+      given: "Đường tròn (O), hai dây AB và CD cắt nhau tại điểm I nằm trong đường tròn.",
+      prove: "IA · IB = IC · ID.",
+      tip: "Muốn chứng minh tích hai đoạn bằng nhau, hãy đưa về tỉ số bằng nhau — tức là tìm hai tam giác đồng dạng.",
+      steps: [
+        { t: "Xét hai tam giác IAC và IDB." },
+        { t: "∠AIC = ∠DIB (hai góc đối đỉnh).", why: "Hai góc đối đỉnh thì bằng nhau",
+          whys: ["Hai góc đối đỉnh thì bằng nhau", "Hai góc so le trong", "Hai góc đồng vị"] },
+        { t: "∠IAC = ∠IDB (hai góc nội tiếp cùng chắn cung CB).", why: "Hai góc nội tiếp cùng chắn một cung thì bằng nhau",
+          whys: ["Hai góc nội tiếp cùng chắn một cung thì bằng nhau", "Góc ở tâm gấp đôi góc nội tiếp", "Tổng hai góc đối bằng 180°"] },
+        { t: "Suy ra ΔIAC ∽ ΔIDB (g.g).", why: "Trường hợp đồng dạng góc–góc",
+          whys: ["Trường hợp đồng dạng góc–góc", "Trường hợp cạnh–cạnh–cạnh", "Tính chất đường trung tuyến"] },
+        { t: "Do đó IA/ID = IC/IB, suy ra IA · IB = IC · ID." }
+      ] },
+    { id: "p-goc-tam", emoji: "🎯", title: "Tính góc bằng góc ở tâm và góc nội tiếp",
+      given: "Tam giác ABC nội tiếp đường tròn (O), ∠BOC = 120°.",
+      prove: "∠BAC = 60°.",
+      tip: "Một cung có thể được nhìn bởi góc ở tâm và góc nội tiếp — góc ở tâm luôn gấp đôi.",
+      steps: [
+        { t: "∠BOC là góc ở tâm chắn cung BC nên số đo cung BC = ∠BOC = 120°.", why: "Góc ở tâm có số đo bằng số đo cung bị chắn",
+          whys: ["Góc ở tâm có số đo bằng số đo cung bị chắn", "Góc nội tiếp bằng số đo cung", "Tổng ba góc trong tam giác"] },
+        { t: "∠BAC là góc nội tiếp chắn cung BC." },
+        { t: "Suy ra ∠BAC = ½ · số đo cung BC = ½ · 120° = 60°.", why: "Góc nội tiếp bằng nửa số đo cung bị chắn",
+          whys: ["Góc nội tiếp bằng nửa số đo cung bị chắn", "Góc tạo bởi hai cát tuyến", "Định lí Pythagore"] }
+      ] }
+  ];
+
   /* Xuất dữ liệu ra App.DATA */
-  App.DATA = { chapters, lessons, mentor, mentorFallback, games, practice, thinking, exams: EXAMS.concat(EXAMS_EXTRA), examGen: EXAM_GEN, rama: RAMA };
+  App.DATA = { chapters, lessons, mentor, mentorFallback, games, practice, thinking, exams: EXAMS.concat(EXAMS_EXTRA), examGen: EXAM_GEN, rama: RAMA, skills: SKILLS, proofs: PROOFS };
 })(window.App = window.App || {});

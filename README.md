@@ -662,3 +662,21 @@ Hai thay đổi nhỏ về giao diện nhưng lớn về hành vi, dựa trên k
 **🔥 Không bao giờ hiện "chuỗi 0".** Đứt chuỗi thì hiện "kỷ lục N ngày"; người mới thì hiện "bắt đầu". Số 0 trần trụi là thứ khiến nhiều em bỏ cuộc sau lần lỡ đầu tiên.
 
 > Kiểm thử tự động: thẻ 5 phút luôn ở vị trí đầu; người mới → việc = tò mò, bấm Bắt đầu hé lộ và tự nhận xong +15 EXP; có lỗi sai → việc = ôn 3 câu, điều hướng đúng, ôn 2/3 chưa xong, đủ 3 mới xong và thẻ tự chuyển ✅; cùng ngày không đổi việc; tò mò 5 ngày liên tiếp ra 5 bài khác nhau; chuỗi 0 không hiện; chạy cả khi chặn bộ nhớ — 0 lỗi.
+
+---
+
+## 🛠️ v4.0 — Khắc phục 3 điểm yếu lớn
+
+### 1) Nội dung mỏng → ♾️ Luyện vô hạn
+Thay vì thêm vài chục câu rồi lại cạn, app có **bộ sinh bài tập cho 8 kỹ năng cốt lõi**: rút gọn căn, cộng trừ căn đồng dạng, giải hệ phương trình, giải phương trình bậc hai, định lí Vi-ét, tỉ số lượng giác, góc ở tâm & góc nội tiếp, bài toán thực tế (phần trăm, chuyển động). Mỗi lần bấm là **bộ 10 câu mới với số liệu khác**, luôn ra nghiệm đẹp, kèm lời giải khớp theo số. Không bao giờ hết bài, không dính bản quyền SGK (số liệu tự sinh). Đúng ≥90% có pháo hoa và gợi ý chuyển kỹ năng; sai vào Sổ lỗi sai như mọi nơi.
+
+### 2) Chưa dạy viết chứng minh → ✍️ Tập viết chứng minh hình học
+Hình học chứng minh chiếm 2,5 điểm đề thi và là chỗ mất điểm oan nhất — không phải vì không hiểu mà vì **viết thiếu căn cứ**. Module mới luyện đúng kỹ năng đó qua 6 bài kinh điển (tứ giác nội tiếp 2 cách, hai tiếp tuyến cắt nhau, góc chắn nửa đường tròn + hệ thức lượng, đồng dạng từ góc nội tiếp, tính góc bằng góc ở tâm):
+- **Bước 1 — Sắp xếp:** các bước chứng minh bị xáo, em bấm theo đúng thứ tự. Sai ở đâu app chỉ đúng bước đó và giữ lại phần đã đúng.
+- **Bước 2 — Căn cứ:** với mỗi bước then chốt, chọn đúng định lí/tính chất làm căn cứ (3 lựa chọn). Đây chính là thứ giám khảo tìm khi chấm.
+- Chỉ khi đúng cả thứ tự lẫn mọi căn cứ mới được "bài chứng minh hoàn chỉnh" — mô phỏng đúng tiêu chí điểm tối đa.
+
+### 3) Menu 17 mục → 4 nhóm gọn
+Sidebar gom thành **📚 HỌC · ✏️ LUYỆN · 🎓 THI · 🎮 KHÁM PHÁ** (bấm tiêu đề để thu gọn/mở), cấp 1 chỉ còn Trang chủ và Cài đặt. Vào mục nào, nhóm chứa nó tự mở. Học sinh mở app không còn phải "chọn giữa 17 thứ".
+
+> Kiểm định: 8.000 lượt sinh bài không lỗi cấu trúc; 2.500 lượt kiểm tra độc lập (rút gọn căn, nghiệm PT bậc hai thoả phương trình, góc nội tiếp = ½ cung, sin/cos/tan đúng cạnh, giảm giá đúng %) → 0 sai. Kiểm thử giao diện: menu 4 nhóm thu/mở đúng; luyện vô hạn 10 câu/bộ, chấm + lời giải + đổi bộ; chứng minh: xáo bước, khoá nút khi chưa đủ, thứ tự sai được chỉ và cắt về trước chỗ sai, đúng → sang căn cứ, chấm hoàn chỉnh + EXP + lưu; chạy cả khi chặn bộ nhớ — 0 lỗi.

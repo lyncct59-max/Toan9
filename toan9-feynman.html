@@ -1399,6 +1399,52 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
 .hod-emoji { font-size: 20px; margin-right: 4px; }
 .hod .hook-reveal { margin-top: 10px; }
 
+/* =========================================================================
+   MENU NHÓM · ♾️ LUYỆN VÔ HẠN · ✍️ CHỨNG MINH
+   ========================================================================= */
+.nav-group { margin-top: 6px; }
+.nav-head {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  background: transparent; border: 0; cursor: pointer; padding: 8px 14px 4px;
+  font-family: var(--font-body); font-size: 11px; font-weight: 800; letter-spacing: .6px; color: var(--ink-faint);
+}
+.nav-caret { transition: transform .2s; font-size: 12px; }
+.nav-group.collapsed .nav-caret { transform: rotate(-90deg); }
+.nav-group.collapsed .nav-items { display: none; }
+.nav-group .nav-item { padding-left: 22px; font-size: 13.5px; }
+
+.skill-card {
+  text-align: left; cursor: pointer; display: grid; gap: 4px;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 15px; padding: 14px 15px;
+  font-family: var(--font-body); color: var(--ink); transition: transform .1s, border-color .15s;
+}
+.skill-card:hover { transform: translateY(-2px); border-color: var(--brand); }
+.skill-card .gc-emoji { font-size: 28px; }
+.skill-card b { font-size: 14.5px; }
+.skill-card span { font-size: 12.5px; color: var(--ink-soft); }
+
+.proof-gt { font-size: 14.5px; line-height: 1.6; border-left: 4px solid var(--brand); }
+.proof-pool { display: grid; gap: 8px; }
+.proof-step {
+  text-align: left; cursor: pointer; background: var(--surface); border: 1.5px dashed var(--border);
+  border-radius: 12px; padding: 10px 13px; font-family: var(--font-body); font-size: 14px; line-height: 1.55; color: var(--ink);
+}
+.proof-step:hover { border-style: solid; border-color: var(--brand); background: var(--brand-soft); }
+.proof-list { margin: 0; padding-left: 22px; display: grid; gap: 8px; }
+.proof-list li { position: relative; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 10px 40px 10px 13px; font-size: 14px; line-height: 1.55; }
+.proof-list.final li { padding-right: 13px; }
+.proof-undo { position: absolute; right: 8px; top: 8px; border: 0; background: transparent; cursor: pointer; color: var(--ink-faint); font-weight: 800; }
+.proof-undo:hover { color: var(--rose-500, #f43f5e); }
+.why-opts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.why-opt {
+  border: 1.5px solid var(--border); background: var(--surface-2, var(--bg)); border-radius: 999px;
+  padding: 5px 12px; font-family: var(--font-body); font-size: 12.5px; cursor: pointer; color: var(--ink);
+}
+.why-opt.selected { border-color: var(--brand); background: var(--brand-soft); font-weight: 700; }
+.why-opt.correct { border-color: var(--brand); background: var(--brand); color: #fff; }
+.why-opt.wrong { border-color: #ef4444; color: #dc2626; }
+.why-opt.locked { cursor: default; }
+
 </style>
 
   <!-- Lưới an toàn: bắt lỗi nạp file (404) và lỗi chạy để không bao giờ trắng trang. -->
@@ -1444,20 +1490,47 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
 
       <nav class="nav">
         <a class="nav-item" href="#/dashboard"   data-route="dashboard"><span class="ic">🏠</span> Trang chủ</a>
-        <a class="nav-item" href="#/lo-trinh"     data-route="lo-trinh"><span class="ic">🗺️</span> Lộ trình</a>
-        <a class="nav-item" href="#/ban-do"        data-route="ban-do"><span class="ic">🌳</span> Bản đồ kiến thức</a>
-        <a class="nav-item" href="#/luyen-tap"    data-route="luyen-tap"><span class="ic">📒</span> Luyện tập</a>
-        <a class="nav-item" href="#/tu-duy"        data-route="tu-duy"><span class="ic">🧠</span> Rèn tư duy</a>
-        <a class="nav-item" href="#/loi-sai"       data-route="loi-sai"><span class="ic">📕</span> Sổ tay lỗi sai</a>
-        <a class="nav-item" href="#/thi-thu"       data-route="thi-thu"><span class="ic">🎓</span> Thi thử vào 10</a>
-        <a class="nav-item" href="#/ai-de"         data-route="ai-de"><span class="ic">🤖</span> AI ra đề</a>
-        <a class="nav-item" href="#/ramanujan"     data-route="ramanujan"><span class="ic">🔮</span> Góc Ramanujan</a>
-        <a class="nav-item" href="#/tien-bo"       data-route="tien-bo"><span class="ic">📈</span> Tiến bộ</a>
-        <a class="nav-item" href="#/flashcard"    data-route="flashcard"><span class="ic">🃏</span> Flashcard</a>
-        <a class="nav-item" href="#/on-tap"       data-route="on-tap"><span class="ic">🔁</span> Ôn tập <span class="nav-badge" data-badge="ontap">0</span></a>
-        <a class="nav-item" href="#/mentor"       data-route="mentor"><span class="ic">💬</span> AI Mentor</a>
-        <a class="nav-item" href="#/game"         data-route="game"><span class="ic">⚔️</span> Đấu trường</a>
-        <a class="nav-item" href="#/thanh-tich"   data-route="thanh-tich"><span class="ic">🏆</span> Thành tích</a>
+
+        <div class="nav-group" data-group="hoc">
+          <button class="nav-head" type="button"><span>📚 HỌC</span><span class="nav-caret">▾</span></button>
+          <div class="nav-items">
+            <a class="nav-item" href="#/lo-trinh"     data-route="lo-trinh"><span class="ic">🗺️</span> Lộ trình 37 bài</a>
+            <a class="nav-item" href="#/ban-do"        data-route="ban-do"><span class="ic">🌳</span> Bản đồ kiến thức</a>
+            <a class="nav-item" href="#/flashcard"    data-route="flashcard"><span class="ic">🃏</span> Flashcard</a>
+            <a class="nav-item" href="#/on-tap"       data-route="on-tap"><span class="ic">🔁</span> Ôn tập <span class="nav-badge" data-badge="ontap">0</span></a>
+          </div>
+        </div>
+
+        <div class="nav-group" data-group="luyen">
+          <button class="nav-head" type="button"><span>✏️ LUYỆN</span><span class="nav-caret">▾</span></button>
+          <div class="nav-items">
+            <a class="nav-item" href="#/luyen-tap"    data-route="luyen-tap"><span class="ic">📒</span> Luyện theo bài</a>
+            <a class="nav-item" href="#/vo-han"       data-route="vo-han"><span class="ic">♾️</span> Luyện vô hạn</a>
+            <a class="nav-item" href="#/chung-minh"   data-route="chung-minh"><span class="ic">✍️</span> Tập viết chứng minh</a>
+            <a class="nav-item" href="#/tu-duy"        data-route="tu-duy"><span class="ic">🧠</span> Rèn tư duy</a>
+            <a class="nav-item" href="#/loi-sai"       data-route="loi-sai"><span class="ic">📕</span> Sổ tay lỗi sai</a>
+            <a class="nav-item" href="#/ai-de"         data-route="ai-de"><span class="ic">🤖</span> AI ra đề</a>
+          </div>
+        </div>
+
+        <div class="nav-group" data-group="thi">
+          <button class="nav-head" type="button"><span>🎓 THI</span><span class="nav-caret">▾</span></button>
+          <div class="nav-items">
+            <a class="nav-item" href="#/thi-thu"       data-route="thi-thu"><span class="ic">🎓</span> Thi thử vào 10</a>
+            <a class="nav-item" href="#/tien-bo"       data-route="tien-bo"><span class="ic">📈</span> Tiến bộ & Kiểm tra</a>
+          </div>
+        </div>
+
+        <div class="nav-group" data-group="kham-pha">
+          <button class="nav-head" type="button"><span>🎮 KHÁM PHÁ</span><span class="nav-caret">▾</span></button>
+          <div class="nav-items">
+            <a class="nav-item" href="#/game"         data-route="game"><span class="ic">🎮</span> Trò chơi</a>
+            <a class="nav-item" href="#/ramanujan"     data-route="ramanujan"><span class="ic">🔮</span> Góc Ramanujan</a>
+            <a class="nav-item" href="#/mentor"       data-route="mentor"><span class="ic">💬</span> AI Mentor</a>
+            <a class="nav-item" href="#/thanh-tich"   data-route="thanh-tich"><span class="ic">🏆</span> Thành tích</a>
+          </div>
+        </div>
+
         <a class="nav-item" href="#/cai-dat"      data-route="cai-dat"><span class="ic">⚙️</span> Cài đặt</a>
       </nav>
 
@@ -4902,8 +4975,199 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
     }
   ];
 
+
+  /* ===================== ♾️ LUYỆN VÔ HẠN — bộ sinh bài tập theo kỹ năng ===================== */
+  function _gi(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function _gp(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function _mcFrom(correct, wrongs) {
+    const opts = [String(correct)].concat(wrongs.map(String).filter((w, i, arr) => w !== String(correct) && arr.indexOf(w) === i)).slice(0, 4);
+    let pad = 1; while (opts.length < 4) { const cand = isNaN(Number(correct)) ? String(correct) + " + " + pad : String(Number(correct) + pad * 7); if (opts.indexOf(cand) === -1) opts.push(cand); pad++; }
+    for (let i = opts.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; }
+    return { options: opts, answer: opts.indexOf(String(correct)) };
+  }
+  const SKILLS = [
+    { id: "s-can", emoji: "√", title: "Rút gọn căn thức", lessonId: "khai-can",
+      gen: function () {
+        const base = _gp([2, 3, 5, 7]);
+        const k = _gi(2, 9);
+        const n = k * k * base;
+        const wrong = [k + "√" + (base * k), (k - 1) + "√" + base, k * base + "√" + base];
+        return Object.assign({ type: "mc", q: "Rút gọn √" + n + ".",
+          sol: [n + " = " + (k * k) + " · " + base, "√" + n + " = √" + (k * k) + " · √" + base + " = " + k + "√" + base] },
+          _mcFrom(k + "√" + base, wrong));
+      } },
+    { id: "s-can-cong", emoji: "➕", title: "Cộng trừ căn đồng dạng", lessonId: "rut-gon-can",
+      gen: function () {
+        const base = _gp([2, 3, 5]);
+        const a = _gi(2, 6), b = _gi(1, 5), c = _gi(1, 4);
+        const val = a - b + c;
+        const q = "Tính " + a + "√" + base + " − " + b + "√" + base + " + " + c + "√" + base + ".";
+        const txt = v => v === 0 ? "0" : (v === 1 ? "" : v) + "√" + base;
+        return Object.assign({ type: "mc", q: q, sol: ["Các căn đồng dạng: (" + a + " − " + b + " + " + c + ")√" + base, "= " + txt(val)] },
+          _mcFrom(txt(val), [txt(val + 2), txt(a + b + c), txt(val - 1 || val + 3)]));
+      } },
+    { id: "s-he", emoji: "🧩", title: "Giải hệ phương trình", lessonId: "he-phuong-trinh",
+      gen: function () {
+        const x = _gi(-4, 6), y = _gi(-4, 6);
+        const a = _gi(1, 3), b = _gi(1, 3), c = a * x + b * y;
+        const d = _gi(1, 3), e = -_gi(1, 3), f = d * x + e * y;
+        const fmt = (k, v) => (k === 1 ? "" : k === -1 ? "−" : (k < 0 ? "−" + (-k) : k)) + v;
+        const line1 = fmt(a, "x") + " + " + fmt(b, "y") + " = " + c;
+        const line2 = fmt(d, "x") + " " + (e < 0 ? "− " + (-e === 1 ? "" : -e) : "+ " + e) + "y = " + f;
+        const which = _gp(["x", "y"]);
+        const ans = which === "x" ? x : y;
+        return { type: "fill", q: "Giải hệ: " + line1 + " và " + line2 + ". Tìm " + which + ".", answer: String(ans), accept: [String(ans), which + "=" + ans],
+          sol: ["Dùng phép cộng đại số hoặc phép thế để khử một ẩn", "Nghiệm của hệ: x = " + x + ", y = " + y, "Thử lại: " + a + "·" + x + " + " + b + "·" + y + " = " + c + " ✓"] };
+      } },
+    { id: "s-bac-hai", emoji: "🔷", title: "Giải phương trình bậc hai", lessonId: "phuong-trinh-bac-hai",
+      gen: function () {
+        const r1 = _gi(-6, 6), r2 = _gi(-6, 6);
+        const S = r1 + r2, P = r1 * r2;
+        const bTxt = S === 0 ? "" : (S > 0 ? " − " + (S === 1 ? "" : S) + "x" : " + " + (-S === 1 ? "" : -S) + "x");
+        const cTxt = P === 0 ? "" : (P > 0 ? " + " + P : " − " + (-P));
+        const q = "Phương trình x²" + bTxt + cTxt + " = 0 có nghiệm lớn hơn (hoặc nghiệm kép) là?";
+        const big = Math.max(r1, r2);
+        return { type: "fill", q: q, answer: String(big), accept: [String(big), "x=" + big],
+          sol: ["Tìm hai số có tổng " + S + " và tích " + P + " (Vi-ét): " + r1 + " và " + r2,
+                "Hoặc dùng Δ = b² − 4ac = " + (S * S - 4 * P) + " → x = (" + S + " ± √" + (S * S - 4 * P) + ")/2",
+                "Nghiệm lớn hơn: " + big] };
+      } },
+    { id: "s-viet", emoji: "⚡", title: "Định lí Vi-ét", lessonId: "he-thuc-vi-et",
+      gen: function () {
+        const a = _gp([1, 1, 2, 3]), b = _gi(-9, 9), c = _gi(-9, 9);
+        const want = _gp(["tổng", "tích"]);
+        const val = want === "tổng" ? -b / a : c / a;
+        const fmtNum = v => Number.isInteger(v) ? String(v) : (v < 0 ? "−" : "") + Math.abs(v * a) + "/" + a;
+        const bT = b === 0 ? "" : (b > 0 ? " + " + (b === 1 ? "" : b) + "x" : " − " + (-b === 1 ? "" : -b) + "x");
+        const cT = c === 0 ? "" : (c > 0 ? " + " + c : " − " + (-c));
+        const q = "Giả sử phương trình " + (a === 1 ? "" : a) + "x²" + bT + cT + " = 0 có hai nghiệm x₁, x₂. Tính " + (want === "tổng" ? "x₁ + x₂" : "x₁·x₂") + ".";
+        const cand = [b / a, c / a, -c / a, -b / a, b, c, -b, -c, val + 1, val - 1, val + 2, val * 2].map(fmtNum);
+        const wrongs = []; cand.forEach(w => { if (w !== fmtNum(val) && wrongs.indexOf(w) === -1 && wrongs.length < 3) wrongs.push(w); });
+        return Object.assign({ type: "mc", q: q, sol: ["Vi-ét: x₁ + x₂ = −b/a, x₁·x₂ = c/a", (want === "tổng" ? "x₁ + x₂ = −(" + b + ")/" + a : "x₁·x₂ = " + c + "/" + a) + " = " + fmtNum(val)] },
+          _mcFrom(fmtNum(val), wrongs));
+      } },
+    { id: "s-luong-giac", emoji: "📐", title: "Tỉ số lượng giác góc nhọn", lessonId: "ti-so-luong-giac",
+      gen: function () {
+        const tri = _gp([[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17], [9, 12, 15]]);
+        const [a, b, c] = tri;  // vuông tại A, AB = a (đối B? ta đặt rõ)
+        // Tam giác ABC vuông tại A, AB = a, AC = b, BC = c. Góc B: đối = AC = b, kề = AB = a
+        const which = _gp(["sin", "cos", "tan"]);
+        const val = which === "sin" ? b + "/" + c : which === "cos" ? a + "/" + c : b + "/" + a;
+        const wrongs = [a + "/" + c, b + "/" + c, b + "/" + a, a + "/" + b].filter(v => v !== val);
+        return Object.assign({ type: "mc", q: "Tam giác ABC vuông tại A có AB = " + a + ", AC = " + b + ", BC = " + c + ". Tính " + which + " B.",
+          sol: ["Với góc B: cạnh đối là AC = " + b + ", cạnh kề là AB = " + a + ", huyền BC = " + c,
+                which + " B = " + (which === "sin" ? "đối/huyền" : which === "cos" ? "kề/huyền" : "đối/kề") + " = " + val] },
+          _mcFrom(val, wrongs));
+      } },
+    { id: "s-goc-tron", emoji: "⭕", title: "Góc ở tâm & góc nội tiếp", lessonId: "goc-noi-tiep",
+      gen: function () {
+        const arc = _gp([40, 50, 60, 70, 80, 100, 110, 120, 140, 150]);
+        const kind = _gp(["nt", "tam"]);
+        if (kind === "nt") return Object.assign({ type: "mc", q: "Góc nội tiếp chắn cung có số đo " + arc + "°. Số đo góc nội tiếp là:",
+          sol: ["Góc nội tiếp bằng nửa số đo cung bị chắn", arc + "° : 2 = " + (arc / 2) + "°"] }, _mcFrom(arc / 2 + "°", [arc + "°", (arc * 2) + "°", (180 - arc) + "°"]));
+        return Object.assign({ type: "mc", q: "Góc nội tiếp chắn một cung có số đo " + (arc / 2) + "°. Góc ở tâm cùng chắn cung đó bằng:",
+          sol: ["Góc ở tâm bằng số đo cung, góc nội tiếp bằng nửa cung", "Góc ở tâm = 2 × " + (arc / 2) + "° = " + arc + "°"] }, _mcFrom(arc + "°", [(arc / 2) + "°", (arc / 4) + "°", (180 - arc / 2) + "°"]));
+      } },
+    { id: "s-thuc-te", emoji: "🛒", title: "Bài toán thực tế (phần trăm, chuyển động)", lessonId: "ham-so-bac-nhat",
+      gen: function () {
+        if (Math.random() < 0.5) {
+          const goc = _gi(2, 9) * 100, pct = _gp([10, 20, 25, 30, 40, 50]);
+          const sau = goc * (100 - pct) / 100;
+          return { type: "fill", q: "Một món hàng giảm giá " + pct + "% còn " + sau + " nghìn đồng. Giá gốc là bao nhiêu nghìn đồng?", answer: String(goc), accept: [String(goc)],
+            sol: ["Giảm " + pct + "% → còn " + (100 - pct) + "% giá gốc", "Giá gốc = " + sau + " : " + ((100 - pct) / 100) + " = " + goc] };
+        }
+        const v = _gp([30, 40, 45, 50, 60]), t = _gp([1.5, 2, 2.5, 3]);
+        const s = v * t;
+        return { type: "fill", q: "Ô tô đi với vận tốc " + v + " km/h trong " + t + " giờ. Quãng đường đi được là bao nhiêu km?", answer: String(s), accept: [String(s)],
+          sol: ["Quãng đường = vận tốc × thời gian", s + " = " + v + " × " + t] };
+      } }
+  ];
+
+
+  /* ===================== ✍️ TẬP VIẾT CHỨNG MINH HÌNH HỌC ===================== */
+  // Mỗi bài: các bước ĐÚNG THỨ TỰ; bước có "why" là bước then chốt phải chọn lý do.
+  const PROOFS = [
+    { id: "p-tu-giac-nt-1", emoji: "🔷", title: "Tứ giác có hai góc vuông đối nhau nội tiếp",
+      given: "Tam giác ABC, hai đường cao BE và CF cắt nhau tại H.",
+      prove: "Tứ giác AEHF nội tiếp.",
+      tip: "Muốn chứng minh tứ giác nội tiếp, hãy tìm hai góc đối có tổng 180°, hoặc hai đỉnh kề cùng nhìn một cạnh dưới góc bằng nhau.",
+      steps: [
+        { t: "BE là đường cao nên BE ⊥ AC, suy ra ∠AEH = 90°." },
+        { t: "CF là đường cao nên CF ⊥ AB, suy ra ∠AFH = 90°." },
+        { t: "Xét tứ giác AEHF có ∠AEH + ∠AFH = 90° + 90° = 180°.", why: "Tổng hai góc đối của tứ giác bằng 180°",
+          whys: ["Tổng hai góc đối của tứ giác bằng 180°", "Hai góc kề bù", "Định lí Pythagore"] },
+        { t: "Vậy tứ giác AEHF nội tiếp (dấu hiệu tứ giác có tổng hai góc đối bằng 180°).", why: "Dấu hiệu nhận biết tứ giác nội tiếp",
+          whys: ["Dấu hiệu nhận biết tứ giác nội tiếp", "Tính chất đường trung trực", "Hai tam giác đồng dạng"] }
+      ] },
+    { id: "p-tu-giac-nt-2", emoji: "👀", title: "Hai đỉnh cùng nhìn một cạnh dưới góc vuông",
+      given: "Tam giác ABC, hai đường cao BE và CF.",
+      prove: "Tứ giác BFEC nội tiếp.",
+      tip: "Khi hai đỉnh kề nhau cùng nhìn một cạnh dưới góc 90°, cả bốn điểm nằm trên đường tròn đường kính là cạnh đó.",
+      steps: [
+        { t: "CF ⊥ AB nên ∠BFC = 90°." },
+        { t: "BE ⊥ AC nên ∠BEC = 90°." },
+        { t: "Hai điểm F và E cùng nhìn đoạn BC dưới một góc 90°.", why: "Quỹ tích cung chứa góc (góc nhìn đoạn thẳng)",
+          whys: ["Quỹ tích cung chứa góc (góc nhìn đoạn thẳng)", "Định lí Ta-lét", "Tính chất tia phân giác"] },
+        { t: "Do đó F, E thuộc đường tròn đường kính BC.", why: "Góc nội tiếp chắn nửa đường tròn là góc vuông",
+          whys: ["Góc nội tiếp chắn nửa đường tròn là góc vuông", "Hai góc so le trong bằng nhau", "Định lí Pythagore đảo"] },
+        { t: "Vậy bốn điểm B, F, E, C cùng thuộc một đường tròn, tức tứ giác BFEC nội tiếp." }
+      ] },
+    { id: "p-tiep-tuyen", emoji: "📏", title: "Hai tiếp tuyến cắt nhau & tứ giác nội tiếp",
+      given: "Từ điểm A ngoài đường tròn (O), kẻ hai tiếp tuyến AB, AC (B, C là tiếp điểm).",
+      prove: "Tứ giác ABOC nội tiếp và OA ⊥ BC.",
+      tip: "Tiếp tuyến luôn vuông góc với bán kính tại tiếp điểm — đây là 'chìa khoá' mở hầu hết bài về tiếp tuyến.",
+      steps: [
+        { t: "AB là tiếp tuyến tại B nên AB ⊥ OB, suy ra ∠ABO = 90°.", why: "Tiếp tuyến vuông góc với bán kính tại tiếp điểm",
+          whys: ["Tiếp tuyến vuông góc với bán kính tại tiếp điểm", "Hai góc đối đỉnh", "Định lí về góc ngoài tam giác"] },
+        { t: "Tương tự, AC là tiếp tuyến tại C nên ∠ACO = 90°." },
+        { t: "Tứ giác ABOC có ∠ABO + ∠ACO = 180° nên nội tiếp." },
+        { t: "Theo tính chất hai tiếp tuyến cắt nhau: AB = AC; lại có OB = OC = R.", why: "Tính chất hai tiếp tuyến cắt nhau",
+          whys: ["Tính chất hai tiếp tuyến cắt nhau", "Hệ thức lượng trong tam giác vuông", "Định lí đường trung bình"] },
+        { t: "A và O cùng cách đều hai điểm B, C nên OA là đường trung trực của BC.", why: "Điểm cách đều hai đầu đoạn thẳng nằm trên trung trực",
+          whys: ["Điểm cách đều hai đầu đoạn thẳng nằm trên trung trực", "Tổng ba góc trong tam giác", "Góc tạo bởi tia tiếp tuyến và dây"] },
+        { t: "Vậy OA ⊥ BC." }
+      ] },
+    { id: "p-nua-tron", emoji: "🌓", title: "Góc nội tiếp chắn nửa đường tròn",
+      given: "Nửa đường tròn (O) đường kính AB, điểm M trên nửa đường tròn (M ≠ A, B), MH ⊥ AB tại H.",
+      prove: "MH² = HA · HB.",
+      tip: "Thấy đường kính → nghĩ ngay tới góc vuông; thấy tam giác vuông có đường cao → nghĩ tới hệ thức lượng.",
+      steps: [
+        { t: "∠AMB là góc nội tiếp chắn nửa đường tròn nên ∠AMB = 90°.", why: "Góc nội tiếp chắn nửa đường tròn là góc vuông",
+          whys: ["Góc nội tiếp chắn nửa đường tròn là góc vuông", "Góc ở tâm bằng số đo cung", "Hai góc kề bù"] },
+        { t: "Suy ra tam giác AMB vuông tại M." },
+        { t: "Trong tam giác vuông AMB, MH là đường cao ứng với cạnh huyền AB." },
+        { t: "Theo hệ thức lượng trong tam giác vuông: MH² = HA · HB.", why: "Hệ thức lượng trong tam giác vuông (h² = b'·c')",
+          whys: ["Hệ thức lượng trong tam giác vuông (h² = b'·c')", "Định lí Ta-lét", "Tính chất đường phân giác"] }
+      ] },
+    { id: "p-dong-dang", emoji: "🔺", title: "Hai tam giác đồng dạng từ góc nội tiếp",
+      given: "Đường tròn (O), hai dây AB và CD cắt nhau tại điểm I nằm trong đường tròn.",
+      prove: "IA · IB = IC · ID.",
+      tip: "Muốn chứng minh tích hai đoạn bằng nhau, hãy đưa về tỉ số bằng nhau — tức là tìm hai tam giác đồng dạng.",
+      steps: [
+        { t: "Xét hai tam giác IAC và IDB." },
+        { t: "∠AIC = ∠DIB (hai góc đối đỉnh).", why: "Hai góc đối đỉnh thì bằng nhau",
+          whys: ["Hai góc đối đỉnh thì bằng nhau", "Hai góc so le trong", "Hai góc đồng vị"] },
+        { t: "∠IAC = ∠IDB (hai góc nội tiếp cùng chắn cung CB).", why: "Hai góc nội tiếp cùng chắn một cung thì bằng nhau",
+          whys: ["Hai góc nội tiếp cùng chắn một cung thì bằng nhau", "Góc ở tâm gấp đôi góc nội tiếp", "Tổng hai góc đối bằng 180°"] },
+        { t: "Suy ra ΔIAC ∽ ΔIDB (g.g).", why: "Trường hợp đồng dạng góc–góc",
+          whys: ["Trường hợp đồng dạng góc–góc", "Trường hợp cạnh–cạnh–cạnh", "Tính chất đường trung tuyến"] },
+        { t: "Do đó IA/ID = IC/IB, suy ra IA · IB = IC · ID." }
+      ] },
+    { id: "p-goc-tam", emoji: "🎯", title: "Tính góc bằng góc ở tâm và góc nội tiếp",
+      given: "Tam giác ABC nội tiếp đường tròn (O), ∠BOC = 120°.",
+      prove: "∠BAC = 60°.",
+      tip: "Một cung có thể được nhìn bởi góc ở tâm và góc nội tiếp — góc ở tâm luôn gấp đôi.",
+      steps: [
+        { t: "∠BOC là góc ở tâm chắn cung BC nên số đo cung BC = ∠BOC = 120°.", why: "Góc ở tâm có số đo bằng số đo cung bị chắn",
+          whys: ["Góc ở tâm có số đo bằng số đo cung bị chắn", "Góc nội tiếp bằng số đo cung", "Tổng ba góc trong tam giác"] },
+        { t: "∠BAC là góc nội tiếp chắn cung BC." },
+        { t: "Suy ra ∠BAC = ½ · số đo cung BC = ½ · 120° = 60°.", why: "Góc nội tiếp bằng nửa số đo cung bị chắn",
+          whys: ["Góc nội tiếp bằng nửa số đo cung bị chắn", "Góc tạo bởi hai cát tuyến", "Định lí Pythagore"] }
+      ] }
+  ];
+
   /* Xuất dữ liệu ra App.DATA */
-  App.DATA = { chapters, lessons, mentor, mentorFallback, games, practice, thinking, exams: EXAMS.concat(EXAMS_EXTRA), examGen: EXAM_GEN, rama: RAMA };
+  App.DATA = { chapters, lessons, mentor, mentorFallback, games, practice, thinking, exams: EXAMS.concat(EXAMS_EXTRA), examGen: EXAM_GEN, rama: RAMA, skills: SKILLS, proofs: PROOFS };
 })(window.App = window.App || {});
 
 </script>
@@ -6217,7 +6481,7 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
 (function (App) {
   "use strict";
 
-  const APP_VERSION = "v3.9 · 05/09/2026";
+  const APP_VERSION = "v4.0 · 05/09/2026";
 
   const S = App.Storage;
   const E = App.Engine;
@@ -6282,7 +6546,9 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
   function setActive(base) {
     $$("[data-route]").forEach(a => {
       const r = a.getAttribute("data-route");
-      a.classList.toggle("active", r === base || (base === "hoc" && r === "lo-trinh"));
+      const on = r === base || (base === "hoc" && r === "lo-trinh");
+      a.classList.toggle("active", on);
+      if (on) { const g = a.closest(".nav-group"); if (g) g.classList.remove("collapsed"); }
     });
   }
 
@@ -9554,7 +9820,7 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
   /* =======================================================================
      VIEW: SỔ TAY LỖI SAI (ôn lại chính câu đã sai theo lịch)
      ===================================================================== */
-  const MK_SOURCE_LABEL = { hoc: "Bài học", luyen: "Luyện tập", tuduy: "Rèn tư duy", kiemtra: "Kiểm tra", thithu: "Thi thử vào 10", ai: "AI ra đề", rama: "Góc Ramanujan" };
+  const MK_SOURCE_LABEL = { hoc: "Bài học", luyen: "Luyện tập", tuduy: "Rèn tư duy", kiemtra: "Kiểm tra", thithu: "Thi thử vào 10", ai: "AI ra đề", rama: "Góc Ramanujan", vohan: "Luyện vô hạn" };
 
   function renderMistakes() {
     const due = S.mistakesDueList();
@@ -10307,6 +10573,195 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
   }
 
   /* =======================================================================
+     ♾️ LUYỆN VÔ HẠN — bài tập sinh tự động theo kỹ năng, không bao giờ cạn
+     ===================================================================== */
+  function renderInfinite(skillId) {
+    if (!skillId) {
+      setView(`<div class="section-title"><span class="ic">♾️</span><h2>Luyện vô hạn</h2></div>
+        <p class="soft mb">Mỗi lần bấm là một <b>bộ 10 câu mới</b>, số liệu khác nhau — luyện tới khi thành phản xạ. Chọn kỹ năng:</p>
+        <div class="game-hub">
+          ${D.skills.map(sk => {
+            const st = S.topicStat ? S.topicStat(sk.lessonId) : null;
+            return `<button class="skill-card" data-skill="${sk.id}">
+              <div class="gc-emoji">${sk.emoji}</div><b>${esc(sk.title)}</b>
+              <span>${st && st.total ? "Độ chính xác: " + Math.round(st.acc * 100) + "% (" + st.total + " câu)" : "Chưa luyện"}</span>
+            </button>`;
+          }).join("")}
+        </div>`);
+      $$("[data-skill]").forEach(b => b.onclick = () => go("#/vo-han/" + b.getAttribute("data-skill")));
+      return;
+    }
+    const sk = D.skills.find(x => x.id === skillId);
+    if (!sk) { renderInfinite(); return; }
+    const qs = []; for (let i = 0; i < 10; i++) qs.push(sk.gen());
+    let answered = 0, correct = 0;
+    setView(`<div class="section-title"><span class="ic">${sk.emoji}</span><h2>${esc(sk.title)}</h2></div>
+      <div class="row between mb" style="align-items:center"><span class="soft">Bộ 10 câu sinh ngẫu nhiên · <b id="inf-score">0/0</b></span>
+        <button class="btn ghost sm" id="inf-new">🔁 Bộ khác</button></div>
+      <div id="inf-host">${qs.map((q, i) => renderQuestion(q, i, "inf")).join("")}</div>
+      <div class="card mt" id="inf-done" hidden></div>
+      <div class="row mt"><button class="btn ghost sm" id="inf-back">⟵ Chọn kỹ năng khác</button></div>`);
+    $("#inf-new").onclick = () => renderInfinite(skillId);
+    $("#inf-back").onclick = () => go("#/vo-han");
+    qs.forEach((q, i) => {
+      const card = $('.q-card[data-q="' + i + '"]');
+      const solHost = card.querySelector(".sol-host");
+      wireHint(card, q);
+      let done = false;
+      const settle = ok => {
+        if (done) return; done = true;
+        answered++; if (ok) correct++;
+        $("#inf-score").textContent = correct + "/" + answered;
+        solHost.innerHTML = solutionHtml(q);
+        S.recordTopic(sk.lessonId, ok);
+        if (ok) { gain(E.EXP.quizCorrect); refreshChrome(); }
+        else noteMistake(q, false, { source: "vohan", lessonId: sk.lessonId, label: sk.title });
+        if (answered === qs.length) {
+          const pct = Math.round(correct / qs.length * 100);
+          const box = $("#inf-done"); box.hidden = false;
+          box.innerHTML = "<b>" + (pct >= 90 ? "🏆 Xuất sắc!" : pct >= 70 ? "👍 Tốt lắm!" : "💪 Cứ luyện tiếp!") + "</b> Đúng " + correct + "/" + qs.length + " (" + pct + "%). " +
+            (pct >= 90 ? "Kỹ năng này đã thành phản xạ — chuyển sang kỹ năng khác nhé." : "Làm thêm một bộ nữa để chắc tay.") +
+            '<div class="row mt-sm" style="gap:8px"><button class="btn sm" id="inf-again">🔁 Bộ mới ngay</button></div>';
+          if (pct >= 90) E.confetti();
+          $("#inf-again").onclick = () => renderInfinite(skillId);
+        }
+      };
+      if (q.type === "mc") {
+        const opts = $$(".opt", card);
+        opts.forEach(btn => btn.onclick = () => {
+          if (done) return;
+          const k = Number(btn.getAttribute("data-opt"));
+          const ok = E.checkMc(k, q);
+          btn.classList.add(ok ? "correct" : "wrong", "selected");
+          if (!ok) opts[q.answer].classList.add("correct");
+          opts.forEach(o => o.classList.add("locked"));
+          settle(ok);
+        });
+      } else {
+        const input = card.querySelector("[data-fill]");
+        const check = card.querySelector("[data-check]");
+        const go2 = () => {
+          if (done) return;
+          const ok = E.checkFill(input.value, q);
+          input.classList.add(ok ? "correct" : "wrong"); input.disabled = true; check.disabled = true;
+          if (!ok) solHost.insertAdjacentHTML("afterbegin", '<p class="mt-sm" style="color:var(--rose-500);font-weight:700">Đáp án đúng: ' + esc(q.answer) + "</p>");
+          settle(ok);
+        };
+        check.onclick = go2;
+        input.addEventListener("keydown", e => { if (e.key === "Enter") go2(); });
+      }
+    });
+  }
+
+  /* =======================================================================
+     ✍️ TẬP VIẾT CHỨNG MINH HÌNH HỌC — sắp xếp bước + chọn căn cứ
+     ===================================================================== */
+  function renderProofs(pid) {
+    if (!pid) {
+      setView(`<div class="section-title"><span class="ic">✍️</span><h2>Tập viết chứng minh</h2></div>
+        <div class="card rama-intro">
+          <p style="margin:0 0 6px"><b>Hình học chứng minh chiếm 2,5 điểm đề thi vào 10</b> — và là phần nhiều bạn mất điểm nhất, không phải vì không hiểu, mà vì <b>không biết viết cho có căn cứ</b>.</p>
+          <p class="soft" style="margin:0">Ở đây em luyện đúng kỹ năng đó: các bước chứng minh bị xáo trộn, em <b>sắp lại đúng thứ tự</b> và <b>chọn căn cứ</b> (định lí/tính chất) cho các bước then chốt — y như cách giám khảo chấm.</p>
+        </div>
+        <div class="rama-list mt">
+          ${D.proofs.map((p, i) => {
+            const st = S.lesson("proof:" + p.id);
+            return `<button class="rama-card ${st.done ? "done" : ""}" data-proof="${p.id}">
+              <span class="rc-emoji">${p.emoji}</span>
+              <span class="rc-body"><b>${esc(p.title)}</b><span class="rc-meta">${st.done ? "✅ Đã hoàn thành" : "Bài " + (i + 1) + " · " + p.steps.length + " bước"}</span></span>
+              <span class="rc-go">→</span></button>`;
+          }).join("")}
+        </div>`);
+      $$("[data-proof]").forEach(b => b.onclick = () => go("#/chung-minh/" + b.getAttribute("data-proof")));
+      return;
+    }
+    const P = D.proofs.find(x => x.id === pid);
+    if (!P) { renderProofs(); return; }
+    // xáo trộn bước
+    const order = P.steps.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [order[i], order[j]] = [order[j], order[i]]; }
+    if (order.every((v, i) => v === i)) order.reverse();
+    let placed = [];   // chỉ số bước đã đặt theo thứ tự em chọn
+    let phase = 1;
+
+    function render() {
+      setView(`<div class="proof-view">
+        <div class="rama-head"><span class="rh-emoji">${P.emoji}</span><div><b>${esc(P.title)}</b><div class="soft" style="font-size:12.5px">Tập viết chứng minh · ${phase === 1 ? "Bước 1/2: sắp xếp" : "Bước 2/2: căn cứ"}</div></div></div>
+        <div class="card proof-gt"><div><b>Giả thiết:</b> ${P.given}</div><div class="mt-sm"><b>Kết luận:</b> ${P.prove}</div></div>
+        <p class="rama-hint">💡 ${P.tip}</p>
+        ${phase === 1 ? `
+          <div class="section-title mt"><span class="ic">🔀</span><h2>Bấm các bước theo đúng thứ tự</h2></div>
+          <div class="proof-pool" id="proof-pool">
+            ${order.filter(i => placed.indexOf(i) === -1).map(i => `<button class="proof-step" data-st="${i}">${P.steps[i].t}</button>`).join("")}
+          </div>
+          <div class="section-title mt"><span class="ic">📝</span><h2>Bài chứng minh của em</h2></div>
+          <ol class="proof-list" id="proof-list">
+            ${placed.map((i, k) => `<li><span>${P.steps[i].t}</span><button class="proof-undo" data-un="${k}" title="Bỏ bước này">✕</button></li>`).join("")}
+            ${placed.length ? "" : '<li class="soft" style="list-style:none">Chưa có bước nào — bấm vào các bước ở trên.</li>'}
+          </ol>
+          <button class="btn primary block mt" id="proof-check1" ${placed.length === P.steps.length ? "" : "disabled"}>Kiểm tra thứ tự</button>`
+        : `
+          <div class="section-title mt"><span class="ic">📐</span><h2>Chọn căn cứ cho các bước then chốt</h2></div>
+          <ol class="proof-list final" id="proof-final">
+            ${P.steps.map((st, i) => `<li><span>${st.t}</span>${st.why ? `<div class="why-opts" data-w="${i}">${shuffled(st.whys).map(w => `<button class="why-opt" data-why="${esc(w)}">${esc(w)}</button>`).join("")}</div>` : ""}</li>`).join("")}
+          </ol>
+          <button class="btn primary block mt" id="proof-check2">Chấm bài chứng minh</button>`}
+        <div class="row mt"><button class="btn ghost sm" id="proof-back">⟵ Danh sách bài</button></div>
+      </div>`);
+      $("#proof-back").onclick = () => go("#/chung-minh");
+      if (phase === 1) {
+        $$(".proof-step").forEach(b => b.onclick = () => { placed.push(+b.getAttribute("data-st")); render(); });
+        $$(".proof-undo").forEach(b => b.onclick = () => { placed.splice(+b.getAttribute("data-un"), 1); render(); });
+        const chk = $("#proof-check1");
+        chk.onclick = () => {
+          const ok = placed.every((v, i) => v === i);
+          if (ok) { E.toast('<span class="t-ic">✅</span> Thứ tự chuẩn! Giờ ghi căn cứ cho từng bước.'); phase = 2; render(); }
+          else {
+            const firstWrong = placed.findIndex((v, i) => v !== i);
+            E.toast("⚠️ Bước số " + (firstWrong + 1) + " chưa đúng chỗ — nghĩ xem bước đó cần điều gì trước nó?");
+            placed = placed.slice(0, firstWrong); render();
+          }
+        };
+      } else {
+        $$(".why-opts").forEach(box => $$(".why-opt", box).forEach(b => b.onclick = () => {
+          $$(".why-opt", box).forEach(x => x.classList.toggle("selected", x === b));
+        }));
+        $("#proof-check2").onclick = () => {
+          let need = 0, got = 0;
+          P.steps.forEach((st, i) => {
+            if (!st.why) return; need++;
+            const box = $('.why-opts[data-w="' + i + '"]');
+            const sel = box.querySelector(".why-opt.selected");
+            const ok = sel && sel.getAttribute("data-why") === st.why;
+            if (ok) got++;
+            $$(".why-opt", box).forEach(x => { x.classList.add("locked"); if (x.getAttribute("data-why") === st.why) x.classList.add("correct"); else if (x === sel) x.classList.add("wrong"); });
+          });
+          finish(need, got);
+        };
+      }
+    }
+    function shuffled(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
+    function finish(need, got) {
+      const full = got === need;
+      const first = !S.lesson("proof:" + P.id).done;
+      if (full) { S.setLessonDone("proof:" + P.id); if (first) gain(E.EXP.feynman); E.confetti(); }
+      else gain(E.EXP.quizCorrect * got);
+      refreshChrome();
+      const btn = $("#proof-check2"); if (btn) btn.remove();
+      const res = document.createElement("div");
+      res.className = "mk-result " + (full ? "ok" : "no");
+      res.innerHTML = (full
+        ? "🏆 <b>Bài chứng minh hoàn chỉnh!</b> Đúng thứ tự và đủ " + need + " căn cứ — đây chính là bài được điểm tối đa khi thi." + (first ? " <b>+" + E.EXP.feynman + " EXP</b>" : "")
+        : "📝 Thứ tự đúng, căn cứ đúng " + got + "/" + need + ". Căn cứ đúng đã tô xanh — <b>đọc kỹ tên định lí</b>, thi thật thiếu căn cứ là mất điểm dù đáp án đúng.")
+        + '<div class="row mt-sm" style="gap:8px"><button class="btn sm" id="proof-again">Làm lại</button><button class="btn ghost sm" id="proof-list-btn">Bài khác</button></div>';
+      $("#proof-final").insertAdjacentElement("afterend", res);
+      $("#proof-again").onclick = () => renderProofs(P.id);
+      $("#proof-list-btn").onclick = () => go("#/chung-minh");
+    }
+    render();
+  }
+
+  /* =======================================================================
      ROUTER
      ===================================================================== */
   function route() {
@@ -10321,7 +10776,7 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
       dashboard: "Trang chủ", "lo-trinh": "Lộ trình", flashcard: "Flashcard",
       "on-tap": "Ôn tập", mentor: "AI Mentor", "thanh-tich": "Thành tích",
       "cai-dat": "Cài đặt", session: "Buổi học 30'", game: "Đấu trường", "luyen-tap": "Luyện tập",
-      "phu-huynh": "Góc phụ huynh", "tu-duy": "Rèn tư duy", "kiem-tra": "Kiểm tra định kỳ", "tien-bo": "Tiến bộ", "loi-sai": "Sổ tay lỗi sai", "ban-do": "Bản đồ kiến thức", "thi-thu": "Thi thử vào 10", "ai-de": "AI ra đề", "ramanujan": "Góc Ramanujan"
+      "phu-huynh": "Góc phụ huynh", "tu-duy": "Rèn tư duy", "kiem-tra": "Kiểm tra định kỳ", "tien-bo": "Tiến bộ", "loi-sai": "Sổ tay lỗi sai", "ban-do": "Bản đồ kiến thức", "thi-thu": "Thi thử vào 10", "ai-de": "AI ra đề", "ramanujan": "Góc Ramanujan", "vo-han": "Luyện vô hạn", "chung-minh": "Tập viết chứng minh"
     };
     if (base !== "hoc") titleEl.textContent = titles[base] || "Toán 9";
     setActive(base);
@@ -10345,6 +10800,8 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
       case "thi-thu": if (parts[1]) renderExam(parts[1]); else renderExamHub(); break;
       case "ai-de": renderAiDrill(); break;
       case "ramanujan": if (parts[1]) renderRama(parts[1]); else renderRamaHub(); break;
+      case "vo-han": renderInfinite(parts[1]); break;
+      case "chung-minh": renderProofs(parts[1]); break;
       case "kiem-tra": renderTest(); break;
       case "tien-bo": renderProgress(); break;
       default: renderDashboard();
@@ -10375,6 +10832,8 @@ html[data-theme="dark"] .sb-freeze { background: rgba(255,255,255,.1); }
     S.load();
     initProfileChip();
     startTimebank();
+    // menu nhóm: bấm tiêu đề để đóng/mở; nhớ trạng thái trong phiên
+    $$(".nav-group .nav-head").forEach(h => h.onclick = () => h.parentNode.classList.toggle("collapsed"));
     // Tự render công thức KaTeX cho cả nội dung chèn động (lời giải, bước học, hook…)
     try {
       if (window.MutationObserver && viewEl) {
