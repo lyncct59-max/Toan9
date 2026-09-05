@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
+  <link rel="stylesheet" href="assets/katex/katex.min.css" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 
   <!-- Lưới an toàn: bắt lỗi nạp file (404) và lỗi chạy để không bao giờ trắng trang. -->
@@ -58,8 +59,13 @@
       <nav class="nav">
         <a class="nav-item" href="#/dashboard"   data-route="dashboard"><span class="ic">🏠</span> Trang chủ</a>
         <a class="nav-item" href="#/lo-trinh"     data-route="lo-trinh"><span class="ic">🗺️</span> Lộ trình</a>
+        <a class="nav-item" href="#/ban-do"        data-route="ban-do"><span class="ic">🌳</span> Bản đồ kiến thức</a>
         <a class="nav-item" href="#/luyen-tap"    data-route="luyen-tap"><span class="ic">📒</span> Luyện tập</a>
         <a class="nav-item" href="#/tu-duy"        data-route="tu-duy"><span class="ic">🧠</span> Rèn tư duy</a>
+        <a class="nav-item" href="#/loi-sai"       data-route="loi-sai"><span class="ic">📕</span> Sổ tay lỗi sai</a>
+        <a class="nav-item" href="#/thi-thu"       data-route="thi-thu"><span class="ic">🎓</span> Thi thử vào 10</a>
+        <a class="nav-item" href="#/ai-de"         data-route="ai-de"><span class="ic">🤖</span> AI ra đề</a>
+        <a class="nav-item" href="#/ramanujan"     data-route="ramanujan"><span class="ic">🔮</span> Góc Ramanujan</a>
         <a class="nav-item" href="#/tien-bo"       data-route="tien-bo"><span class="ic">📈</span> Tiến bộ</a>
         <a class="nav-item" href="#/flashcard"    data-route="flashcard"><span class="ic">🃏</span> Flashcard</a>
         <a class="nav-item" href="#/on-tap"       data-route="on-tap"><span class="ic">🔁</span> Ôn tập <span class="nav-badge" data-badge="ontap">0</span></a>
@@ -125,6 +131,7 @@
   <canvas id="confetti"></canvas>
 
   <!-- Nạp script THEO ĐÚNG THỨ TỰ phụ thuộc. Mỗi file gắn vào window.App. -->
+  <script defer src="assets/katex/katex.min.js"></script>
   <script src="assets/js/data.js"></script>
   <script src="assets/js/storage.js"></script>
   <script src="assets/js/engine.js"></script>

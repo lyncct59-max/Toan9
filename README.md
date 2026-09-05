@@ -481,3 +481,184 @@ M��i khi mở một bài học, thay vì thấy lý thuyết ngay, học sinh g�
 **Mẹo kiểm chứng:** chân menu trái luôn ghi "Phiên bản vX · ngày". Sau này mỗi lần mình nâng cấp sẽ tăng số này — bạn chỉ cần liếc là biết bản trên mạng đã mới chưa.
 
 > Kiểm thử: bản build chứa đúng đồng hồ toàn cục (3 phút qua 3 module không reset), tem phiên bản hiện ở sidebar + Cài đặt, sw.js v3 network-first hợp lệ — 0 lỗi.
+
+---
+
+## 🚑 Sửa lỗi "Deployment failed, try again later" (actions/deploy-pages)
+
+Lỗi này nằm ở khâu triển khai GitHub Actions, không phải ở code app. Chọn 1 trong 2 cách:
+
+### Cách A — Đơn giản nhất, KHÔNG cần Actions (khuyên dùng)
+App là web tĩnh thuần, không cần build, nên không cần workflow:
+1. Vào repo → **Settings → Pages**.
+2. Mục **Build and deployment → Source**: chọn **"Deploy from a branch"**.
+3. Branch: `main`, thư mục `/ (root)` → **Save**.
+4. Nếu repo đang có file workflow cũ trong `.github/workflows/` thì xoá đi để nó khỏi chạy nữa.
+5. Chờ 1–2 phút, mở `https://<tên>.github.io/<repo>/` — xong. Mỗi lần đẩy code mới, Pages tự cập nhật.
+
+### Cách B — Vẫn muốn dùng Actions
+Nguyên nhân "Deployment failed" thường gặp (kiểm theo thứ tự):
+1. **Settings → Pages → Source chưa để "GitHub Actions"** — bắt buộc phải chọn đúng nguồn này trước khi workflow chạy.
+2. Workflow **thiếu quyền** `pages: write` và `id-token: write`, hoặc **thiếu `environment: github-pages`** trong job.
+3. Artifact upload bằng `actions/upload-artifact` thường — **phải dùng `actions/upload-pages-artifact`** (định dạng tar riêng của Pages).
+4. **Environment "github-pages" có protection rule** chỉ cho phép branch khác với branch bạn đang đẩy (Settings → Environments → github-pages → Deployment branches).
+5. Đôi khi chỉ là **trục trặc tạm của GitHub** — bấm **Re-run all jobs** thử lại.
+
+Trong thư mục dự án đã kèm sẵn file chuẩn **`.github/workflows/deploy.yml`** (đủ quyền, đúng action, đúng environment) — chép nguyên vào repo là chạy.
+
+> Gợi ý: với dự án này Cách A là đủ và bền nhất; Actions chỉ đáng dùng khi sau này bạn thêm bước build.
+
+---
+
+## 🤖 AI Mentor thật (ChatGPT) — v3.1
+
+AI Mentor giờ có thể nối với **ChatGPT thật** qua API của OpenAI. Không bắt buộc: chưa có key thì app vẫn dùng đầy đủ như cũ (Mentor trả lời theo kịch bản có sẵn).
+
+### Cách bật (5 phút)
+1. Vào **platform.openai.com** → đăng nhập → mục **API keys** → **Create new secret key** → sao chép chuỗi bắt đầu bằng `sk-…`. (Cần nạp tối thiểu $5 vào tài khoản OpenAI — dùng được rất lâu.)
+2. Mở app → **Cài đặt → 🤖 AI Mentor (ChatGPT)** → dán key → chọn model → **Lưu** → bấm **Kiểm tra kết nối** thấy "✅ Kết nối thành công" là xong.
+3. Model khuyên dùng: **gpt-4o-mini** — rẻ nhất (khoảng vài trăm đến vài nghìn đồng cho cả trăm câu hỏi), đủ thông minh cho Toán 9. Muốn "xịn" hơn chọn gpt-4o.
+
+### Có key thì được gì
+- **💬 AI Mentor chat thật:** hỏi bất kỳ điều gì về Toán 9. AI đóng vai cô giáo theo SGK Kết nối tri thức, trả lời kiểu Socratic (gợi ý từng bước, không giải hộ ngay), tự biết em đang yếu chủ đề nào (đọc từ hồ sơ điểm yếu) để hướng dẫn sát hơn. Banner đầu trang hiện 🟢 khi đang nối AI thật.
+- **🤖 AI chấm bài tự luận:** trong khu Rèn tư duy, sau khi xem lời giải mẫu có thêm nút **"Nhờ AI chấm"** — AI đọc bài làm của em, đối chiếu từng tiêu chí (rubric) và lời giải mẫu, trả về nhận xét + điểm + gợi ý cải thiện.
+
+### Bảo mật & chi phí
+- Key **chỉ lưu trên máy của bạn** (LocalStorage), gọi thẳng tới OpenAI, không qua máy chủ trung gian nào.
+- Key **không bao giờ lọt vào tệp sao lưu** (Xuất tệp đã tự che key) — gửi backup cho ai cũng an toàn.
+- Nên đặt **Billing Limits** trong tài khoản OpenAI (vd $5/tháng) để tuyệt đối yên tâm.
+- Lưu ý: gọi API cần mở app qua **https** (GitHub Pages/Netlify đều là https — chuẩn rồi); mở file trực tiếp trên máy vẫn được nhưng một số trình duyệt có thể chặn.
+
+> Kiểm thử tự động: lưu/kiểm tra/xoá key (payload đúng URL + Bearer + model); exportState không chứa key; chat gửi kèm system prompt cô giáo + điểm yếu, render đậm/xuống dòng, lỗi 401 báo "khoá API không đúng"; không key → banner trắng + fallback cũ + essay ẩn nút AI; AI chấm tự luận gửi đủ đề + tiêu chí + bài làm, lỗi mạng báo đỏ; chạy được khi trình duyệt chặn bộ nhớ — 0 lỗi.
+
+---
+
+## 📕 Sổ tay lỗi sai + Ôn lại (v3.2)
+
+Tính năng học tập mạnh nhất vừa thêm: **làm lại đúng chính những câu mình từng sai** — kỹ thuật được chứng minh hiệu quả hơn làm câu mới.
+
+**Tự động ghi lỗi.** Mỗi khi làm sai một câu trắc nghiệm/điền đáp án ở **Bài học, Luyện tập, Rèn tư duy hoặc Kiểm tra định kỳ**, app lưu lại *nguyên câu đó* (kèm nguồn, bài liên quan) vào **Sổ tay lỗi sai** (menu 📕). Câu làm đúng không bị lưu; sửa được rồi thì tự biến mất.
+
+**Ôn lại theo lịch giãn cách (spaced repetition).** Mỗi câu đi qua 3 "hộp": làm đúng thì lên hộp và **giãn dần thời gian hỏi lại** (hôm nay → sau 1 ngày → sau 3 ngày); làm đúng đủ **3 lần** thì câu "🎓 tốt nghiệp" khỏi sổ. Lỡ sai lại thì rớt về hộp đầu, hỏi lại sớm. Nhờ vậy em chỉ ôn đúng câu chưa chắc, đúng lúc sắp quên.
+
+**Nhắc đúng chỗ.** Trang chính hiện thẻ đỏ *"📕 N câu lỗi sai cần ôn hôm nay → Ôn ngay"*; trang Sổ tay cho xem toàn bộ câu đang giữ (đã sai mấy lần, ngày ôn kế tiếp), xoá câu không cần, và nút ôn nhanh cả loạt. Làm đúng khi ôn được cộng EXP.
+
+> Kiểm thử tự động: làm sai 1 câu luyện tập → vào sổ và hiện due hôm nay; dashboard nhắc; trang sổ liệt kê đúng; vào ôn hiện đúng câu đã sai; trả lời đúng → lên hộp, hết due, đúng 3 lần → tốt nghiệp sạch sổ; làm đúng cả bộ thì sổ vẫn trống; chạy được khi trình duyệt chặn bộ nhớ — 0 lỗi.
+
+---
+
+## ➗ Công thức đẹp như sách giáo khoa — KaTeX (v3.3)
+
+Căn thức, luỹ thừa, phân số… giờ được **hiển thị bằng KaTeX** thay vì chữ thường — dấu căn có vạch ngang phủ đúng biểu thức, số mũ nhỏ nâng lên, trông chuẩn như SGK.
+
+- **Tự động, không phải sửa nội dung.** App nhận diện sẵn các mẫu trong bài (√(...), √50, ∛27, x², (x+3)²…) và render đẹp ở khắp nơi: lý thuyết, câu hỏi, lời giải từng bước, hook, sổ lỗi sai. Nội dung động (bấm hiện lời giải, chuyển bước) cũng tự render nhờ theo dõi thay đổi màn hình.
+- **Chạy offline 100%.** KaTeX và bộ font được **nhúng thẳng vào app** (bản 1-file nhúng base64; bản thư mục có `assets/katex/` và được service worker lưu cache) — không gọi mạng, không CDN, vẫn hoạt động khi mất mạng.
+- **An toàn:** không đụng vào ô nhập đáp án, không phá việc chấm bài; nếu vì lý do nào đó KaTeX không nạp được thì nội dung vẫn hiện dạng chữ như cũ (không lỗi).
+
+Lưu ý dung lượng: bản **1-file** giờ ~1,1 MB (do gói kèm font Toán). Nếu muốn nhẹ, dùng **bản thư mục** (KaTeX tải riêng, cache lại sau lần đầu) — khuyên dùng khi đưa lên GitHub Pages.
+
+> Kiểm thử tự động: KaTeX nạp và render đúng (bài học, luyện tập nhiều công thức), renderToString hoạt động, ô nhập đáp án không bị đụng, chấm bài vẫn đúng, không treo/lặp vô hạn, chạy cả khi trình duyệt chặn bộ nhớ — 0 lỗi.
+
+---
+
+## 🌳 Bản đồ cây kiến thức (v3.4)
+
+M��t trang toàn cảnh (menu **🌳 Bản đồ kiến thức**, hoặc `#/ban-do`) cho học sinh nhìn thấy **cả hành trình Toán 9 trong một màn hình**: 11 chương nối nhau bằng một "trục leo núi" dọc, mỗi bài là một ô, **tô màu theo mức thành thạo**:
+
+- ⚪ **Chưa học** (xám) — chưa mở bài.
+- 🟡 **Đang học** — đã làm vài bước nhưng chưa xong bài.
+- 🟢 **Đã xong** — hoàn thành đủ 5 bước Feynman.
+- 🟠★ **Thành thạo** — đã xong *và* làm bài đúng vững (độ chính xác ≥ 85% qua đủ số câu).
+
+Trên cùng hiện **% bản đồ đã chinh phục** + đếm số bài ở mỗi mức; mỗi chương có % riêng. Bấm vào ô bất kỳ là mở thẳng bài đó để học hoặc ôn lại — nhìn phát là biết đang ở đâu và "vùng tối" (phần chưa học) còn ở đâu, tạo cảm giác tiến bộ rất rõ.
+
+> Kiểm thử tự động: bản đồ hiện đủ 37 bài/11 chương, ban đầu tất cả "chưa học"; sau khi học 1 bài → ô chuyển "đã xong", bài đúng vững → "thành thạo ★", bài mới vài bước → "đang học"; % tổng cập nhật; bấm ô mở đúng bài; chạy cả khi trình duyệt chặn bộ nhớ — 0 lỗi.
+
+---
+
+## 🎮 Game v2 — đồ hoạ đẹp & nội dung hấp dẫn hơn (v3.5)
+
+Làm lại toàn bộ khu trò chơi về cả **hình ảnh** lẫn **cảm giác chơi**:
+
+**🏎️ Đua xe tính nhanh (canvas 60fps).** Cảnh đua vẽ thời gian thực: mặt đường cuộn với vạch kẻ trôi, cỏ và bụi cây hai bên chạy theo tốc độ, **đếm ngược 3-2-1-GO!** trước khi xuất phát. Trả lời đúng → **đốt nitro 🔥💨** kèm vệt tốc độ trắng xoẹt qua màn hình, combo hiện góc phải; sai → xe rung và trượt bánh. Gần thắng thì **vạch đích ca-rô** hiện dần. Thêm **3 độ khó**: 🙂 Dễ (cộng trừ), 😎 Vừa (bốn phép tính), 🔥 Khó (√49, 2³, phần trăm nhẩm — thắng được **+40 EXP**). Cơ chế mới "nitro tắt dần" khiến phải trả lời liên tục mới giữ được tốc độ — đúng chất đua.
+
+**🏛️ Đền cổ kho báu (mê cung phiên bản phiêu lưu).** Nền đá tối với đổ bóng lòng đền, hai ngọn **đuốc 🔥 lập loè**; đường chưa đi bị **sương mù** che, hé lộ dần khi tiến lên; mỗi bước có **lời dẫn truyện** ("Cánh cửa đá khắc một câu đố cổ…"); trả lời đúng → **cánh cửa 🚪 xoay mở 3D** rồi nhà thám hiểm nhảy sang ô mới; sai → **màn hình rung** + mất ❤️; viên **💎 kho báu nhấp nháy** chờ ở cuối; cửa cuối cùng là **⚡ Cửa Thần** phát sáng. Câu hỏi vẫn lấy từ ngân hàng SGK Chương I–X (vừa chơi vừa ôn thật).
+
+**Hub trò chơi**: 3 thẻ nền gradient riêng từng game + hiệu ứng vệt sáng lướt qua khi rê chuột.
+
+Kỹ thuật: vòng lặp canvas tự dừng khi rời trang (không rò rỉ), toàn bộ phần vẽ bọc an toàn — máy không hỗ trợ canvas thì game vẫn chơi được bình thường (chỉ mất phần hình nền).
+
+> Kiểm thử tự động: đếm ngược → GO → câu độ Khó ("25% của 120") → thắng +40 EXP; đền cổ: sương mù 8 ô hé dần, sai rung + mất tim, cửa mở 3D ngay sau câu đúng, gặp Cửa Thần, tới KHO BÁU; rời trang giữa trận không lỗi tích tụ — 0 lỗi.
+
+---
+
+## 🎓 Thi thử vào 10 — 90 phút, chấm như thi thật (v3.6)
+
+Nâng cấp lớn nhất về mặt luyện thi: menu **🎓 Thi thử vào 10** với **3 đề mô phỏng đúng cấu trúc đề tuyển sinh**: Câu 1 căn thức (2đ) → Câu 2 hệ PT + bài toán thực tế vòi nước/chuyển động/năng suất (2,5đ) → Câu 3 PT bậc hai & Vi-ét & parabol (2,5đ) → Câu 4 hình học đường tròn (2,5đ) → Câu 5 GTNN/GTLN chốt điểm 10 (0,5đ). Mỗi đề 14 ý, chấm **theo trọng số từng ý, thang điểm 10** — đúng cách giám khảo chấm.
+
+**Phòng thi như thật:** đồng hồ **90 phút** đếm ngược dính trên đầu màn hình; cảnh báo "còn 15 phút" và "còn 5 phút" (thanh giờ chuyển đỏ); **hết giờ tự nộp bài**; nộp sớm được nhưng app nhắc nếu còn ý bỏ trống; được đổi đáp án thoải mái tới khi nộp.
+
+**Sau khi nộp:** điểm to + **xếp loại** (🏆 Giỏi ≥8 · 👍 Khá · 📈 Trung bình · 💪 Cần cố gắng) + thời gian làm; **lời giải từng bước cho cả 14 ý** (ý sai tô đỏ, hiện đáp án em chọn vs đáp án đúng); mọi ý sai/bỏ trống **tự vào Sổ tay lỗi sai** để ôn theo lịch; nút "Ôn lỗi sai ngay". Hoàn thành +40 EXP, đạt ≥8 điểm +60 EXP kèm pháo hoa.
+
+**Theo dõi:** trang chọn đề hiện 🥇 kỷ lục cá nhân, điểm tốt nhất từng đề và 5 lần thi gần nhất — con tự thấy mình tiến bộ qua từng lần thi.
+
+> Kiểm thử tự động: hub 3 đề; phòng thi đủ 14 ý + đồng hồ 90:00; đổi đáp án hoạt động; chấm trọng số chính xác tuyệt đối (sai 2 ý + trống 2 ý → đúng 7/10 như tính tay); xếp loại Khá; 4 ý sai vào sổ lỗi; lịch sử lưu đúng điểm; hết giờ tự nộp và ghi "(tự nộp khi hết giờ)"; công thức căn lồng √((3−√5)²) render KaTeX đẹp không cảnh báo; chạy được khi trình duyệt chặn bộ nhớ — 0 lỗi.
+
+---
+
+## 🚀 v3.7 — Ba nâng cấp cùng lúc
+
+### 1) 📄 Thêm đề thi thử & trộn số liệu ngẫu nhiên
+- Nay có **5 đề** thi thử vào 10 (thêm Đề 4, Đề 5).
+- **Đề 4 và Đề 5 sinh số liệu MỚI mỗi lần thi**: rút gọn căn (√32 − √8 + √18…), hệ phương trình, Vi-ét (tổng/tích/nghiệm lớn), hệ thức lượng MH² = HA·HB, GTNN — tất cả đổi số nhưng luôn ra nghiệm đẹp và lời giải tự khớp theo số mới.
+- **Mọi đề đều trộn thứ tự phương án** sau mỗi lần thi → không thể học vẹt "đáp án câu 1 là A".
+- Học sinh có thể thi lại đề cũ nhiều lần mà vẫn phải *tính thật*.
+
+### 2) 🔒 Chế độ nghiêm của phụ huynh
+- Bật trong **Góc phụ huynh → Chế độ nghiêm** (có PIN bảo vệ như cũ).
+- Khi bật: **khu trò chơi bị khoá** cho tới khi con **học đủ số phút mục tiêu hôm nay** *và* **làm xong bài bố mẹ giao**. Vào thẳng link game cũng bị chặn.
+- Màn khoá hiện rõ tiến độ ("đã học 18/30 phút · còn 1 việc được giao") kèm nút **Vào học ngay** — mang tính hướng dẫn, không phải trừng phạt.
+- Đủ điều kiện là mở khoá ngay lập tức, không cần thao tác gì thêm.
+
+### 3) 🤖 AI ra đề vô hạn theo điểm yếu
+- Menu **🤖 AI ra đề** (cần khoá API ChatGPT như phần AI Mentor).
+- ChatGPT soạn **câu hỏi mới hoàn toàn** đúng chủ đề con hay sai (app tự gửi danh sách chủ đề yếu kèm % chính xác), hoặc chọn tay bài bất kỳ + 3 mức độ.
+- Mỗi lượt 3 câu trắc nghiệm, có **lời giải từng bước**; làm đúng được EXP, **làm sai tự vào Sổ tay lỗi sai** để ôn lại theo lịch. Bấm là có đề mới — luyện không bao giờ hết bài.
+- Xử lý lỗi đầy đủ: AI trả sai định dạng → báo "bấm tạo lại"; khoá API sai → báo rõ; chưa có khoá → hướng dẫn vào Cài đặt.
+
+> Kiểm thử tự động: mở Đề 4 bốn lần ra **4 bản đề khác nhau**; trả lời đúng hết đề ngẫu nhiên → **10/10 cả 3 lượt**; chế độ nghiêm khoá đúng cả khi vào thẳng link, mở khi đủ phút, khoá lại khi có bài giao chưa xong, mở khi hoàn thành; AI ra đề render 3 câu, sai → hiện lời giải + vào sổ lỗi, đúng → cộng EXP, hai ca lỗi (JSON hỏng, khoá 401) báo thân thiện — 0 lỗi.
+
+---
+
+## 🔮 Góc Ramanujan — giải bài theo kiểu nhà toán học (v3.8)
+
+Menu mới **🔮 Góc Ramanujan**: dạy trẻ *cách nghĩ* của Srinivasa Ramanujan — nhà toán học Ấn Độ tự học, nổi tiếng vì nhìn ra quy luật từ hàng đống con số cụ thể.
+
+**Quan trọng về mặt sư phạm:** Ramanujan mạnh ở trực giác nhưng bị phê bình vì hay bỏ qua chứng minh. App vì thế dùng **5 bước, không cho phép bỏ bước 4**:
+
+1. **👀 Quan sát** — bảng các trường hợp nhỏ (không có lời giải sẵn).
+2. **🔮 Đoán** — học sinh phải tự dự đoán trường hợp tiếp theo *trước khi* thấy quy luật. Đoán sai được khích lệ ("đoán sai là một phần của khám phá"), không bị phạt điểm.
+3. **✅ Kiểm chứng** — công bố quy luật.
+4. **📐 Chứng minh** — chứng minh ngắn gọn, kèm lời nhắc rằng đây chính là khâu Ramanujan từng bị chê thiếu.
+5. **⚡ Giải nhanh** — 2 bài tập Toán 9 dùng chính quy luật vừa khám phá (sai thì vào Sổ tay lỗi sai như mọi nơi khác).
+
+**8 khám phá:** tổng số lẻ liên tiếp = n²; bình phương số tận cùng 5 trong 2 giây; hiệu hai bình phương để phá số to (2026² − 2024²); đọc nghiệm phương trình bậc hai không cần Δ (a+b+c=0); **căn lồng vô tận của chính Ramanujan** √(1+2√(1+3√(1+4√…))) = 3 (câu đố ông đăng năm 1911, sáu tháng không ai giải được); mở gói căn trong căn √(7+4√3) = 2+√3; tích 4 số liên tiếp cộng 1 luôn là số chính phương; và **1729 — con số taxi** Hardy chê nhạt nhẽo mà Ramanujan nhận ra ngay là số nhỏ nhất viết được thành tổng hai lập phương theo hai cách.
+
+Tiến độ hiển thị ở hub (x/8), hoàn thành mỗi khám phá được EXP như một bài Feynman.
+
+> Kiểm định toán học: 21 khẳng định trong 8 khám phá đều được máy xác minh độc lập (bao gồm chứng minh 1729 thật sự là số taxicab nhỏ nhất, và căn lồng hội tụ về đúng 3).
+> Kiểm thử tự động: hub 8 thẻ + 5 bước; quan sát không lộ quy luật trước khi đoán; đoán sai → khích lệ và hiện đáp án; chứng minh đủ số bước; áp dụng đúng → EXP, sai → vào sổ lỗi; lưu tiến độ và hub cập nhật 1/8; mở lần lượt cả 8 khám phá 0 lỗi, 51 công thức render KaTeX — 0 lỗi.
+
+---
+
+## ⚡ v3.9 — "Hôm nay 5 phút" + "Tò mò hôm nay": để con tự mở app mỗi ngày
+
+Hai thay đổi nhỏ về giao diện nhưng lớn về hành vi, dựa trên khoa học thói quen (ma sát thấp + phần thưởng đến sớm):
+
+**⚡ Hôm nay · 5 phút — một nút, một việc.** Thẻ đầu tiên trên trang chính. App tự chọn *một* việc nhỏ theo thứ tự ưu tiên: ôn 3 câu em từng sai → lật 5 thẻ ghi nhớ đến hạn → khám phá 1 điều tò mò → học 1 bước bài mới. Làm xong (app tự nhận biết qua hành động thật, không cần bấm "đã xong") là **điểm danh hôm nay thành công**, +15 EXP, thẻ chuyển ✅ và ghi rõ "học tiếp hay nghỉ đều ổn". Cùng ngày mở lại bao nhiêu lần vẫn là việc đó — không đổi ngẫu nhiên gây rối.
+
+**🎣 Tò mò hôm nay.** Thẻ thứ hai: mỗi ngày một câu hỏi đời thực khác nhau (xoay vòng qua các bài chưa học, theo ngày). Bấm "Xem 1 phút" là hé lộ bí mật Toán ngay tại chỗ, rồi có nút vào thẳng bài (đã xem hook nên vào bài là tới lý thuyết luôn). Đây là *lý do để mở app* — tò mò trước, học sau.
+
+**🔥 Không bao giờ hiện "chuỗi 0".** Đứt chuỗi thì hiện "kỷ lục N ngày"; người mới thì hiện "bắt đầu". Số 0 trần trụi là thứ khiến nhiều em bỏ cuộc sau lần lỡ đầu tiên.
+
+> Kiểm thử tự động: thẻ 5 phút luôn ở vị trí đầu; người mới → việc = tò mò, bấm Bắt đầu hé lộ và tự nhận xong +15 EXP; có lỗi sai → việc = ôn 3 câu, điều hướng đúng, ôn 2/3 chưa xong, đủ 3 mới xong và thẻ tự chuyển ✅; cùng ngày không đổi việc; tò mò 5 ngày liên tiếp ra 5 bài khác nhau; chuỗi 0 không hiện; chạy cả khi chặn bộ nhớ — 0 lỗi.
